@@ -22,10 +22,9 @@ time gun_sort_timestamp 0014*.csv.gz
 
 echo "Question d1"
 
-zcat ../data-timestamps/0014*.csv.gz | awk -F , '{if ($1 ~ /^00/) print;}' | wc -l
+ls -d ../data-timestamps/00* | wc -l
 
-
-#Il y a 1494 égo possédant un id commencant par 00.
+#Il y a 63 égo possédant un id commencant par 00.
 
 #Question d2
 echo "Question d2"
@@ -33,22 +32,28 @@ max=16
 for((i=0;i<max;i++))
 do
   x=$(printf "%x\n" $i)
-  zcat ../data-timestamps/0014*.csv.gz | awk -F , -v var_awk="$x" '{if ($1 ~ ("^" var_awk)) print;}' | wc -l
+  echo "Nombre d'égo commencant par $x"
+  ls -d ../data-timestamps/$x* | wc -l
 done
 
 #Question e
 echo "Question e"
 function gun_sort_timestamp_filter_ego(){
-    local filename=$(basename ../data-timestamps/$1 .csv.gz)
-    ((zcat ../data-timestamps/$1 | head -n 1) && (zcat ../data-timestamps/$1 | tail -n+2 | awk -F , -v var_awk="$2" '{if ($1 ~ ("^" var_awk)) print;}' | sort -t, -k3)) | gzip -9 > ../results/sorted_filtered$2_$filename.csv.gz
+    local filename=""
+    for ego in $(ls -d ../data-timestamps/$1*)
+    do 
+      filename=$(basename $ego .csv.gz)
+      ((zcat $ego | head -n 1) && (zcat $ego | tail -n+2) | sort -t, -k3) | gzip -9 > ../results/sorted_$filename.csv.gz
+    done
 }
 
-time (gun_sort_timestamp_filter_ego 0014*.csv.gz "00")
-#Le temps pris par le cpu est 0m0.023 secondes
+time (gun_sort_timestamp_filter_ego "00")
+#Le temps pris par le cpu est 0m0.942s secondes
 
 #Question f
 
-time gun_sort_timestamp_filter_ego 0014*.csv.gz "0" 
+export -f gun_sort_timestamp_filter_ego
 
-#Le temps pris par le cpu est 0m0.031 secondes
+nohup bash -c gun_sort_timestamp_filter_ego "0" &
+
 
