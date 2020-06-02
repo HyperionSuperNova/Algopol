@@ -8,11 +8,11 @@
 
 \f0\fs24 \cf0 Je stock l\'92id de l\'92ego ainsi que le timestamp d\'92origine, et j\'92initialise un compteur \'e0 0.\
 Je calcule et stock le timestamp \'e0 30 jours plus tard.\
-Et je cr\'e9\'e9e deux dictionnaire un de (mois,ann\'e9e) -> nbAlterRecent, un de alter -> timestamp.\
+Et je cr\'e9\'e9e deux dictionnaire un de (mois,ann\'e9e) -> nbAlterRecent, un de alter -> timestamp ainsi qu\'92une liste vide.\
 \pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
 \cf0 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 Je lis le fichier ligne par ligne, si je croise un alter je v\'e9rifie que l\'92id n\'92appartient pas \'e0 l\'92ensemble de cl\'e9s du dictionnaire alter -> timestamp si il n\'92y appartient pas, j\'92incr\'e9mente mon compteur, je stock son id et son timestamp dans le dictionnaire alter -> timestamp. \
 \
-D\'e9s que je croise un alter avec un timestamp sup\'e9rieur ou \'e9gal \'e0 timestamp 30 jours plus tard, je convertis le timestamp d\'92origine pour en r\'e9cup\'e9rer le mois ainsi que l\'92ann\'e9e je somme les douze derniers (au plus) nbAlterRecent du dictionnaire (mois ann\'e9e) -> nbAlterRecent et j\'92ajoute au dictionnaire (mois, ann\'e9e) -> compteur + la somme des douzes derniers nb_alter_recent du dictionnaire.  Le Timestamp d\'92origine devient \'e9gal \'e0 timestamp 30 jours plus tard et Timestamp 30 jours plus tard se voit ajouter 30 jours.\
+D\'e8s que je croise un alter avec un timestamp sup\'e9rieur ou \'e9gal \'e0 timestamp 30 jours plus tard, j\'92ajoute la valeur du compteur \'e0 la liste, je convertis le timestamp d\'92origine pour en r\'e9cup\'e9rer le mois ainsi que l\'92ann\'e9e je somme les douze derniers (au plus) element de ma liste et j\'92ajoute au dictionnaire (mois, ann\'e9e) -> la somme des douzes derniers elements de la liste.  Le Timestamp d\'92origine devient \'e9gal \'e0 timestamp 30 jours plus tard et Timestamp 30 jours plus tard se voit ajouter 30 jours.\
 }
