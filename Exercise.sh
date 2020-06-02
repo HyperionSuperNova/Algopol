@@ -36,6 +36,39 @@ do
   ls -d ../data-timestamps/$x* | wc -l
 done
 
+#Nombre d'égo commencant par 0
+#1048
+#Nombre d'égo commencant par 1
+#1036
+#Nombre d'égo commencant par 2
+#998
+#Nombre d'égo commencant par 3
+#1011
+#Nombre d'égo commencant par 4
+#1047
+#Nombre d'égo commencant par 5
+#1094
+#Nombre d'égo commencant par 6
+#1062
+#Nombre d'égo commencant par 7
+#1022
+#Nombre d'égo commencant par 8
+#1045
+#Nombre d'égo commencant par 9
+#1011
+#Nombre d'égo commencant par a
+#1002
+#Nombre d'égo commencant par b
+#1005
+#Nombre d'égo commencant par c
+#1029
+#Nombre d'égo commencant par d
+#989
+#Nombre d'égo commencant par e
+#965
+#Nombre d'égo commencant par f
+#1048
+
 #Question e
 echo "Question e"
 function gun_sort_timestamp_filter_ego(){

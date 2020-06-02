@@ -1,9 +1,8 @@
-time: cannot run gun_sort_timestamp_filter_ego: No such file or directory
-0.00user 0.00system 0:00.00elapsed 60%CPU (0avgtext+0avgdata 356maxresident)k
-0inputs+8outputs (0major+76minor)pagefaults 0swaps
-time: cannot run gun_sort_timestamp_filter_ego: No such file or directory
-0.00user 0.00system 0:00.00elapsed 78%CPU (0avgtext+0avgdata 360maxresident)k
-0inputs+8outputs (0major+76minor)pagefaults 0swaps
-time: cannot run gun_sort_timestamp_filter_ego: No such file or directory
-0.00user 0.00system 0:00.00elapsed 85%CPU (0avgtext+0avgdata 356maxresident)k
-0inputs+8outputs (0major+76minor)pagefaults 0swaps
+gzip: ../data-timestamps/Bug is a directory -- ignored
+gzip: ../data-timestamps/Bug is a directory -- ignored
+gzip: ../data-timestamps/EXPLORE: Permission denied
+gzip: ../data-timestamps/EXPLORE: Permission denied
+gzip: ../data-timestamps/Bug is a directory -- ignored
+gzip: ../data-timestamps/Bug is a directory -- ignored
+gzip: ../data-timestamps/EXPLORE: Permission denied
+gzip: ../data-timestamps/EXPLORE: Permission denied
