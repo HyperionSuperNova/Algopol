@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATA=../data/timestamps
+DATA=../data-timestamps
 
 # Question a
 
@@ -24,7 +24,7 @@ function gun_sort_timestamp(){
           ) \
         | sort -t, -k3 \
       ) \
-      | gzip -9 > ../results/sorted_$ego.csv.gz
+      | gzip -9 > /home/nabil/results/Alter-cluster-timestamp-sorted/$ego.csv.gz
 }
 
 function question_b (){
@@ -101,7 +101,7 @@ function gun_sort_timestamp_filter_ego(){
     local filename=""
     for ego in "$DATA"/"$pref"*.csv.gz
     do
-      gun_sort_timestamp "$ego"
+      gun_sort_timestamp $(basename "$ego")
     done
 }
 
