@@ -10,6 +10,8 @@ import pandas as pd
 import seaborn as sns
 import os
 import argparse
+import logging
+
 sns.set()
 
 
@@ -120,11 +122,13 @@ def execution(filename, output_path):
     filegz = gzip.open(filename, 'rt')
     csvobj = csv.DictReader(filegz)
     id_ego = get_ego_id(filename)
+    logging.basicConfig(filename='UntreatedFiles.log', level=logging.WARNING)
     try:
         dico_by_month = new_alters_by_month(id_ego, csvobj)
         write_to_csv(id_ego, dico_by_month, output_path)
         generate_plot_from_dict(id_ego, dico_by_month, output_path)
     except Exception:
+        logging.warning('%s', filename)
         pass
     filegz.close()
 
