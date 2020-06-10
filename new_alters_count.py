@@ -133,6 +133,7 @@ if __name__ == "__main__":
         output_path = Path(args.output)
         for file in os.listdir(directory_path):
             filename = os.fsdecode(file)
+            print(filename)
             if filename.endswith(".csv.gz"):
                 execution(os.path.join(args.directory, filename), output_path)
                 continue
