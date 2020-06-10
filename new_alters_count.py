@@ -86,6 +86,8 @@ def new_alters_by_month(ego, csvobj):
 
 def generate_plot_from_dict(id_ego, dico, output_path):
     dico = dict_to_csvdict(dico)
+    if(len(dico) == 0):
+        return
     dico_df = pd.DataFrame.from_records(dico)
     dico_df['date'] = dico_df['Month'].map(
         str) + '-' + dico_df['Year'].map(str)
