@@ -119,6 +119,7 @@ def execution(filename, output_path):
     dico_by_month = new_alters_by_month(id_ego, csvobj)
     write_to_csv(id_ego, dico_by_month, output_path)
     generate_plot_from_dict(id_ego, dico_by_month, output_path)
+    filegz.close()
 
 
 if __name__ == "__main__":
