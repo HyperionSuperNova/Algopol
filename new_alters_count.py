@@ -39,7 +39,7 @@ def add_value_to_dict(dico, key, val):
 
 
 def get_ego_id(ego_path):
-    return os.path.splitext(ego_path)[0].split('/')[1][:8]
+    return os.path.splitext(os.path.basename(ego_path))[0][:8]
 
 
 def next_year(timestamp):
