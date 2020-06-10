@@ -102,7 +102,7 @@ def generate_plot_from_dict(id_ego, dico, output_path):
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
     plt.savefig(os.path.join(output_path, id_ego+'.png'))
     plt.cla()
-    plt.close(fig)
+    plt.close('all')
 
 
 def get_args_parser():
