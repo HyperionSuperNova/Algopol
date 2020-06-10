@@ -61,7 +61,6 @@ def new_alters_by_month(ego, csvobj):
     old_alters = {}
     header = next(csvobj)
     first_row = next(csvobj)
-    print(first_row)
     before = int(first_row['timestamp'])
     for row in csvobj:
         idr, timestamp = row['author'], int(row['timestamp'])
