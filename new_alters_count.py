@@ -99,7 +99,7 @@ def generate_plot_from_dict(id_ego, dico, output_path):
             'AlterCount',
             color='purple', data=dico_df)
     ax.set(xlabel="Date",
-           ylabel="AlterCount")
+           ylabel="Nombre d'Alter récents", title=id_ego)
     ax.xaxis.set_major_formatter(date_form)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
