@@ -1,10 +1,13 @@
+#!/usr/bin/env python3
 import matplotlib.pyplot as plt
 import gzip
 import csv
 from datetime import datetime, timedelta
+from pathlib import Path
 import pandas as pd
 import seaborn as sns
 import os
+import argparse
 sns.set()
 
 
@@ -12,8 +15,8 @@ def dict_to_csvdict(dico):
     return [{'Month': k[0], 'Year':k[1], 'AlterCount':v} for k, v in dico.items()]
 
 
-def write_to_csv(id_ego, dico):
-    csv_file = id_ego + '_alter-count.csv'
+def write_to_csv(id_ego, dico, output_path):
+    csv_file = os.path.join(output_path, id_ego + '_alter-count.csv')
     csv_columns = ['Month', 'Year', 'AlterCount']
     dict_data = dict_to_csvdict(dico)
     try:
@@ -78,10 +81,47 @@ def new_alters_by_month(ego, csvobj):
     return by_month
 
 
-if __name__ == "__main__":
-    file_path = 'sample_data/0a1efab4976c1c7487da95d444e553fe.csv.gz'
-    filegz = gzip.open(file_path, 'rt')
+def generate_plot_from_dict(id_ego, dico, output_path):
+    dico = dict_to_csvdict(dico)
+    dico_df = pd.DataFrame.from_records(dico)
+    dico_df['Month-Year'] = dico_df["Month"].astype(
+        str) + "/" + dico_df["Year"].astype(str)
+    ax = dico_df.plot(x='Month-Year', y='AlterCount', grid=True)
+    plt.savefig(os.path.join(output_path, id_ego+'.png'))
+
+
+def get_args_parser():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-f", '--file', dest="file", metavar="FILE")
+    group.add_argument('-d', '--directory', action="store")
+    parser.add_argument('-o', '--output', required=True)
+
+    return parser.parse_args()
+
+
+def execution(filename, output_path):
+    filegz = gzip.open(filename, 'rt')
     csvobj = csv.DictReader(filegz)
-    id_ego = get_ego_id(file_path)
+    id_ego = get_ego_id(filename)
     dico_by_month = new_alters_by_month(id_ego, csvobj)
-    write_to_csv(id_ego, dico_by_month)
+    write_to_csv(id_ego, dico_by_month, output_path)
+    generate_plot_from_dict(id_ego, dico_by_month, output_path)
+
+
+if __name__ == "__main__":
+    args = get_args_parser()
+    if args.file is not None:
+        file_path = Path(args.file)
+        output_path = Path(args.output)
+        execution(file_path, output_path)
+    elif args.directory is not None:
+        directory_path = os.fsencode(args.directory)
+        output_path = Path(args.output)
+        for file in os.listdir(directory_path):
+            filename = os.fsdecode(file)
+            if filename.endswith(".csv.gz"):
+                execution(os.path.join(args.directory, filename), output_path)
+                continue
+            else:
+                continue
