@@ -101,6 +101,8 @@ def generate_plot_from_dict(id_ego, dico, output_path):
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
     plt.savefig(os.path.join(output_path, id_ego+'.png'))
+    plt.cla()
+    plt.close(fig)
 
 
 def get_args_parser():
