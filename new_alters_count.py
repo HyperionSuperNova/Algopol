@@ -55,13 +55,14 @@ def step_months_if_needed(before, now, old_alters, by_month):
 
 
 def new_alters_by_month(ego, csvobj):
-    header = next(csvobj)
-    first_row = next(csvobj)
-    before = int(first_row['timestamp'])
     nb_new = 0
     by_month = {}
     alters = {}
     old_alters = {}
+    header = next(csvobj)
+    first_row = next(csvobj)
+    before = int(first_row['timestamp'])
+
     for row in csvobj:
         idr, timestamp = row['author'], int(row['timestamp'])
         if idr not in alters and idr != ego:
@@ -116,9 +117,12 @@ def execution(filename, output_path):
     filegz = gzip.open(filename, 'rt')
     csvobj = csv.DictReader(filegz)
     id_ego = get_ego_id(filename)
-    dico_by_month = new_alters_by_month(id_ego, csvobj)
-    write_to_csv(id_ego, dico_by_month, output_path)
-    generate_plot_from_dict(id_ego, dico_by_month, output_path)
+    try:
+        dico_by_month = new_alters_by_month(id_ego, csvobj)
+        write_to_csv(id_ego, dico_by_month, output_path)
+        generate_plot_from_dict(id_ego, dico_by_month, output_path)
+    except StopIteration:
+        pass
     filegz.close()
 
 
