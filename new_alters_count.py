@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from matplotlib.dates import DateFormatter
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import gzip
 import csv
@@ -84,9 +86,19 @@ def new_alters_by_month(ego, csvobj):
 def generate_plot_from_dict(id_ego, dico, output_path):
     dico = dict_to_csvdict(dico)
     dico_df = pd.DataFrame.from_records(dico)
-    dico_df['Month-Year'] = dico_df["Month"].astype(
-        str) + "/" + dico_df["Year"].astype(str)
-    ax = dico_df.plot(x='Month-Year', y='AlterCount', grid=True)
+    dico_df['date'] = dico_df['Month'].map(
+        str) + '-' + dico_df['Year'].map(str)
+    dico_df['date'] = pd.to_datetime(dico_df['date'])
+    fig, ax = plt.subplots(figsize=(12, 12))
+    date_form = DateFormatter("%m-%Y")
+    ax.plot('date',
+            'AlterCount',
+            color='purple', data=dico_df)
+    ax.set(xlabel="Date",
+           ylabel="AlterCount")
+    ax.xaxis.set_major_formatter(date_form)
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
+    ax.format_xdata = mdates.DateFormatter('%m-%Y')
     plt.savefig(os.path.join(output_path, id_ego+'.png'))
 
 
