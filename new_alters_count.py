@@ -4,13 +4,14 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import gzip
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 import pandas as pd
 import seaborn as sns
 import os
 import argparse
 import logging
+from dateutil.relativedelta import *
 
 sns.set()
 
@@ -38,6 +39,7 @@ def add_value_to_dict(dico, key, val):
         dico[key] = dico[key] + val
     else:
         dico[key] = val
+    #print(key, val)
 
 
 def get_ego_id(ego_path):
@@ -85,6 +87,46 @@ def new_alters_by_month(ego, csvobj):
     return by_month
 
 
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + timedelta(days=4)
+    return next_month - timedelta(days=next_month.day)
+
+
+def new_alters_by_month_bis(ego, csvobj):
+    nb_new = 0
+    by_month = {}
+    alters = {}
+    old_alters = {}
+    first_row = next(csvobj)
+    dt_before = last_day_of_month(
+        datetime.fromtimestamp(int(first_row['timestamp'])))
+    # l'id présent sur la première ligne n'est pas nécéssairement un égo il faut donc le vérifier
+    if first_row['author'] != ego:
+        nb_new += 1
+        alters[first_row['author']] = first_row['timestamp']
+        add_value_to_dict(old_alters, (dt_before.month, dt_before.year + 1), 1)
+    for row in csvobj:
+        idr, timestamp = row['author'], int(row['timestamp'])
+        if idr not in alters and idr != ego:
+            alters[idr] = timestamp
+            dt_timestamp = datetime.fromtimestamp(timestamp)
+            month_next_year = (dt_timestamp.month, dt_timestamp.year + 1)
+            dt_last_of_next_month = last_day_of_month(dt_timestamp)
+            month_year = (dt_timestamp.month, dt_timestamp.year)
+            add_value_to_dict(old_alters, month_next_year, 1)
+            # step months if needed
+            if int((dt_last_of_next_month - dt_before).days) >= 28:
+                while dt_before < dt_timestamp:
+                    month_year = (dt_before.month, dt_before.year)
+                    if month_year in old_alters:
+                        nb_new -= old_alters[month_year]
+                    by_month[month_year] = nb_new
+                    dt_before = dt_before + relativedelta(months=+1)
+            nb_new += 1
+
+    return by_month
+
+
 def generate_plot_from_dict(id_ego, dico, output_path):
     dico = dict_to_csvdict(dico)
     if(len(dico) == 0):
@@ -124,10 +166,11 @@ def execution(filename, output_path):
     id_ego = get_ego_id(filename)
     logging.basicConfig(filename='UntreatedFiles.log', level=logging.WARNING)
     try:
-        dico_by_month = new_alters_by_month(id_ego, csvobj)
+        dico_by_month = new_alters_by_month_bis(id_ego, csvobj)
         write_to_csv(id_ego, dico_by_month, output_path)
         generate_plot_from_dict(id_ego, dico_by_month, output_path)
-    except Exception:
+    except Exception as excp:
+        print(excp)
         logging.warning('%s', filename)
         pass
     filegz.close()
