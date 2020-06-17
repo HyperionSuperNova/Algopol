@@ -21,7 +21,13 @@ def dict_to_csvdict(dico):
 
 
 def write_to_csv(id_ego, dico, output_path):
-    csv_file = os.path.join(output_path, id_ego + '_alter-count.csv')
+    final_path = os.path.join(output_path, 'csv')
+    if not os.path.exists(final_path):
+        os.makedirs(final_path)
+    final_path = os.path.join(final_path, id_ego[0])
+    if not os.path.exists(final_path):
+        os.makedirs(final_path)
+    csv_file = os.path.join(final_path, id_ego + '_alter-count.csv')
     csv_columns = ['Month', 'Year', 'AlterCount']
     dict_data = dict_to_csvdict(dico)
     try:
@@ -52,39 +58,6 @@ def next_year(timestamp):
 
 def next_month(timestamp):
     return timestamp + 30*24*3600
-
-
-def step_months_if_needed(before, now, old_alters, by_month):
-    pass
-
-
-def new_alters_by_month(ego, csvobj):
-    nb_new = 0
-    by_month = {}
-    alters = {}
-    old_alters = {}
-    header = next(csvobj)
-    first_row = next(csvobj)
-    before = int(first_row['timestamp'])
-    for row in csvobj:
-        idr, timestamp = row['author'], int(row['timestamp'])
-        if idr not in alters and idr != ego:
-            alters[idr] = timestamp
-            nb_new += 1
-            dt = datetime.fromtimestamp(timestamp)
-            month_year = (dt.month, dt.year)
-            month_next_year = (dt.month, dt.year + 1)
-            add_value_to_dict(old_alters, month_next_year, 1)
-
-            # step months if needed
-            while before < timestamp:
-                dt = datetime.fromtimestamp(before)
-                month_year = (dt.month, dt.year)
-                if month_year in old_alters:
-                    nb_new -= old_alters[month_year]
-                by_month[month_year] = nb_new
-                before = next_month(before)
-    return by_month
 
 
 def last_day_of_month(any_day):
@@ -128,6 +101,12 @@ def new_alters_by_month_bis(ego, csvobj):
 
 
 def generate_plot_from_dict(id_ego, dico, output_path):
+    final_path = os.path.join(output_path, 'plots')
+    if not os.path.exists(final_path):
+        os.makedirs(final_path)
+    final_path = os.path.join(output_path, id_ego[0])
+    if not os.path.exists(final_path):
+        os.makedirs(final_path)
     dico = dict_to_csvdict(dico)
     if(len(dico) == 0):
         return
@@ -145,7 +124,7 @@ def generate_plot_from_dict(id_ego, dico, output_path):
     ax.xaxis.set_major_formatter(date_form)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
-    plt.savefig(os.path.join(output_path, id_ego+'.png'))
+    plt.savefig(os.path.join(final_path, id_ego+'.png'))
     plt.cla()
     plt.close('all')
 
@@ -164,7 +143,8 @@ def execution(filename, output_path):
     filegz = gzip.open(filename, 'rt')
     csvobj = csv.DictReader(filegz)
     id_ego = get_ego_id(filename)
-    logging.basicConfig(filename='UntreatedFiles.log', level=logging.WARNING)
+    log_name = 'logs/alter_count_UntreatedFile.log'
+    logging.basicConfig(filename=log_name, level=logging.WARNING)
     try:
         dico_by_month = new_alters_by_month_bis(id_ego, csvobj)
         write_to_csv(id_ego, dico_by_month, output_path)

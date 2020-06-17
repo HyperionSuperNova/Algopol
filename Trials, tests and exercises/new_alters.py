@@ -1,17 +1,22 @@
 
-def add_value_to_dict(dico,key,val):
+def add_value_to_dict(dico, key, val):
     if key in dico.keys():
         dico[key] = dico[key] + val
     else:
         dico[key] = val
 
+
 def next_year(timestamp):
     return timestamp + 365*24*3600
+
 
 def next_month(timestamp):
     return timestamp + 30*24*3600
 
+
 def step_months_if_needed(before, now, old_alters, by_month):
+    pass
+
 
 def new_alters_by_month(ego, csvobj):
     """
@@ -24,13 +29,13 @@ def new_alters_by_month(ego, csvobj):
     nb_new = 0
     by_month = {}
     for row in csvobj:
-        idr,timestamp = row[0],int(row[2])
+        idr, timestamp = row[0], int(row[2])
         if idr not in alters:
             alters[idr] = timestamp
             nb_new += 1
             dt = datetime.fromtimestamp(timestamp)
-            month_year = ( dt.month, dt.year)
-            month_next_year = ( dt.month, dt.year + 1)
+            month_year = (dt.month, dt.year)
+            month_next_year = (dt.month, dt.year + 1)
             add_value_to_dict(old_alters, month_next_year, 1)
 
             # step months if needed
