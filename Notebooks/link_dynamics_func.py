@@ -76,6 +76,18 @@ def merged_df(df1, df2):
     return df_merged
 
 
+def median_age_binned(df_merged):
+    df_median = df_merged[df_merged.age.notna()].groupby(
+        ['egos', 'age_range'], as_index=False).AlterCount.median()
+    df_median.rename(
+        columns={'AlterCount': 'Median_Alter_Count'}, inplace=True)
+    df_median = df_median[df_median.Median_Alter_Count.notna()]\
+        .groupby(['age_range'], as_index=False)\
+        .agg({'Median_Alter_Count': 'median', 'egos': 'count'})
+    df_median['age_range_str'] = df_median['age_range'].astype(str)
+    return df_median
+
+
 def mean_age_df_binned(df_merged):
     df_mean = df_merged[df_merged.age.notna()].groupby(
         ['egos', 'age_range'], as_index=False).AlterCount.mean()
@@ -96,6 +108,16 @@ def mean_age_df(df_merged):
     return df_mean
 
 
+def median_age_df(df_merged):
+    df_median = df_merged[df_merged.age.notna()]\
+        .groupby(['egos', 'age'], as_index=False)\
+        .AlterCount\
+        .median()
+    df_median.rename(
+        columns={'AlterCount': 'Median_Alter_Count'}, inplace=True)
+    return df_median
+
+
 def mean_gender_df(df_merged):
     df_mean = df_merged[df_merged.gender.notna()].groupby(
         ['egos', 'gender'], as_index=False).AlterCount.mean()
@@ -105,6 +127,16 @@ def mean_gender_df(df_merged):
     return df_mean
 
 
+def median_gender_df(df_merged):
+    df_median = df_merged[df_merged.gender.notna()].groupby(
+        ['egos', 'gender'], as_index=False).AlterCount.median()
+    df_median.rename(
+        columns={'AlterCount': 'Median_Alter_Count'}, inplace=True)
+    df_median = df_median[df_median.Median_Alter_Count.notna()].groupby(['gender'], as_index=False)\
+        .agg({'Median_Alter_Count': 'median', 'egos': 'count'})
+    return df_median
+
+
 def mean_professions(df_merged):
     df_mean = df_merged[df_merged.profession.notna()].groupby(
         ['egos', 'profession'], as_index=False).AlterCount.mean()
@@ -112,3 +144,13 @@ def mean_professions(df_merged):
     df_mean = df_mean[df_mean.Mean_Alter_Count.notna()].groupby(['profession'], as_index=False)\
         .agg({'Mean_Alter_Count': 'mean', 'egos': 'count'})
     return df_mean
+
+
+def median_professions(df_merged):
+    df_median = df_merged[df_merged.profession.notna()].groupby(
+        ['egos', 'profession'], as_index=False).AlterCount.median()
+    df_median.rename(
+        columns={'AlterCount': 'Median_Alter_Count'}, inplace=True)
+    df_median = df_median[df_median.Median_Alter_Count.notna()].groupby(['profession'], as_index=False)\
+        .agg({'Median_Alter_Count': 'median', 'egos': 'count'})
+    return df_median
