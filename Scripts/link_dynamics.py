@@ -10,6 +10,9 @@ from alters_count import get_ego_id, add_value_to_dict
 
 egos_recent_alter_count_path = '../Alter-count-csv-plots/*/csv/*'
 egos_sociocat_path = '../sample_data_egos_age/egos-age-gender-profession.csv'
+plot_output = '../output/linkdynamics/'
+
+############################################################ Loading ##########################################################
 
 
 def load_alters_count():
@@ -31,6 +34,8 @@ def sociocat_altercount_merged(alters_count, sociocat):
         x=df_merged['age'], bins=[0, 18, 30, 59, 75, 100])
     return df_merged
 
+
+############################################################ Computations ##########################################################
 
 def avg_alters_distribution(alters_count):
     alters_count['MeanAlterCount'] = alters_count['AlterCount']
@@ -138,12 +143,110 @@ def median_ego_professions_distribution(df_merged):
         .agg({'Median_Alter_Count': 'median', 'egos': 'count'})
     return df_median
 
+############################################################ Plotting ##########################################################
+
+
+def avg_alters_distribution_plot(dataframe):
+    out = plot_output + 'avg_alter_dist_linear.png'
+    g = sns.catplot(x="RoundedMean", y="Frequency",
+                    data=dataframe, kind="bar", height=20, aspect=40/20)
+    g = g.set_xticklabels(g.ax.get_xticklabels(), rotation=45, ha="right")
+    g.savefig(out)
+    out = plot_output + 'avg_alter_dist_log.png'
+    g = sns.catplot(x="RoundedMean", y="Frequency",
+                    data=dataframe, kind="bar", height=20, aspect=40/20)
+    g = g.set(xscale='log')
+    g.savefig(out)
+
+
+def median_alters_distribution_plot(dataframe):
+    out = plot_output + 'median_alter_dist_linear.png'
+    g = sns.catplot(x="Median_Recent_Ties", y="Frequency",
+                    data=dataframe, kind="bar", height=30, aspect=30/20)
+    g = g.set_xticklabels(g.ax.get_xticklabels(), rotation=45, ha="right")
+    g.savefig(out)
+    out = plot_output + 'median_alter_dist_log.png'
+    g = sns.catplot(x="Median_Recent_Ties", y="Frequency",
+                    data=dataframe, kind="bar", height=30, aspect=30/20)
+    g = g.set(xscale='log')
+    g.savefig(out)
+
+
+def mean_ego_age_distribution_plot(dataframe):
+    out = plot_output + 'mean_ego_age_dist.png'
+    g = sns.relplot(x='age', y='Mean_Alter_Count', data=dataframe,
+                    kind='line', ci=None, height=8, aspect=20/8)
+    g.savefig(out)
+
+
+def median_ego_age_distribution_plot(dataframe):
+    out = plot_output + 'median_ego_age_dist.png'
+    g = sns.relplot(x='age', y='Median_Alter_Count', data=dataframe,
+                    kind='line', ci=None, height=8, aspect=20/8)
+    g.savefig(out)
+
+
+def mean_ego_bin_age_distribution_plot(dataframe):
+    out = plot_output + 'mean_ego_bin_age_dist.png'
+    g = sns.relplot(x='age_range_str', y='Mean_Alter_Count',
+                    data=dataframe, kind='line', height=8)
+    g.savefig(out)
+
+
+def median_ego_bin_age_distribution_plot(dataframe):
+    out = plot_output + 'median_ego_bin_age_dist.png'
+    g = sns.relplot(x='age_range_str', y='Median_Alter_Count',
+                    data=dataframe, kind='line', height=8)
+    g.savefig(out)
+
+
+def mean_ego_gender_distribution_plot(dataframe):
+    out = plot_output + 'mean_ego_gender_dist.png'
+    g = sns.catplot(x='gender', y='Mean_Alter_Count',
+                    data=dataframe, height=8)
+    g.savefig(out)
+
+
+def median_ego_gender_distribution_plot(dataframe):
+    out = plot_output + 'median_ego_gender_dist.png'
+    g = sns.catplot(x='gender', y='Median_Alter_Count',
+                    data=dataframe, height=8)
+    g.savefig(out)
+
+
+def mean_ego_professions_distribution_plot(dataframe):
+    out = plot_output + 'mean_ego_professions_dist.png'
+    g = sns.catplot(x="profession", y="Mean_Alter_Count",
+                    data=dataframe, kind="bar", height=8)
+    g.savefig(out)
+
+
+def median_ego_professions_distribution_plot(dataframe):
+    out = plot_output + 'median_ego_professions_dist.png'
+    g = sns.catplot(x="profession", y="Median_Alter_Count",
+                    data=dataframe, kind="bar", height=8)
+    g.savefig(out)
+
 
 if __name__ == "__main__":
     alters_count = load_alters_count()
     sociocat = load_egos_sociocat()
     altercount_sociocat = sociocat_altercount_merged(alters_count, sociocat)
-    avg_alters_per_ego = avg_alters_distribution(alters_count)
-    median_alters_per_ego = median_alters_distribution(alters_count)
-    print(avg_alters_per_ego)
-    print(median_alters_per_ego)
+    avg_alters_distribution_plot(avg_alters_distribution(alters_count))
+    median_alters_distribution_plot(median_alters_distribution(alters_count))
+    mean_ego_age_distribution_plot(
+        mean_ego_age_distribution(altercount_sociocat))
+    median_ego_age_distribution_plot(
+        median_ego_age_distribution(altercount_sociocat))
+    mean_ego_bin_age_distribution_plot(
+        mean_ego_bin_age_distribution(altercount_sociocat))
+    median_ego_bin_age_distribution_plot(
+        median_ego_bin_age_distribution(altercount_sociocat))
+    mean_ego_gender_distribution_plot(
+        mean_ego_gender_distribution(altercount_sociocat))
+    median_ego_gender_distribution_plot(
+        median_ego_gender_distribution(altercount_sociocat))
+    mean_ego_professions_distribution_plot(
+        mean_ego_professions_distribution(altercount_sociocat))
+    median_ego_professions_distribution_plot(median_ego_professions_distribution(
+        altercount_sociocat))
