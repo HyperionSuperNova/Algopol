@@ -3,14 +3,12 @@ import os
 import csv
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
-import plotly.graph_objects as go
 import dask.dataframe as dd
 from alters_count import get_ego_id, add_value_to_dict
 
-egos_recent_alter_count_path = '../Alter-count-csv-plots/*/csv/*'
-egos_sociocat_path = '../sample_data_egos_age/egos-age-gender-profession.csv'
-plot_output = '../output/linkdynamics/'
+egos_recent_alter_count_path = '../../results/Alter-count-csv-plots/*/csv/*'
+egos_sociocat_path = '../../results/egos-age-gender-profession.csv'
+plot_output = '../../results/link_dynamics_plot/'
 
 ############################################################ Loading ##########################################################
 
