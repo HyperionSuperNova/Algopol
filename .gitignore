@@ -1,1 +1,7 @@
-mypy3
+.gitignore
+*.csv
+output
+sample_*
+.DS_*
+.ipynb_checkpoints
+Alter-count-csv-plots
