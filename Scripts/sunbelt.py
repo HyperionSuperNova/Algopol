@@ -2,9 +2,7 @@ import dask.dataframe as dd
 import pandas as pd
 import numpy as np
 
-cluster_order_path = '../Sunbelt/Cluster_order/sample/*'
-output = '../ouput/sunbelt/'
-
+cluster_order_path = '../../Sunbelt/Cluster_order/CSV/*'
 
 def prepare_dataframe(dataframe):
     dataframe['egos'] = dataframe['path'].str.split('/').str[-1]
