@@ -2,7 +2,8 @@ import dask.dataframe as dd
 import pandas as pd
 import numpy as np
 
-cluster_order_path = '../../Sunbelt/Cluster_order/CSV/*'
+cluster_order_path = '../Sunbelt/Cluster_order/sample/*'
+
 
 def prepare_dataframe(dataframe):
     dataframe['egos'] = dataframe['path'].str.split('/').str[-1]
@@ -34,10 +35,11 @@ def egos_list_consecutive_months(dataframe, ratio, consecutive_months):
             dataframe.egos == ego) & (dataframe.ratio_over_second >= ratio)].sort_values('month_year')
         if filter['month'].diff().cumsum().max() >= consecutive_months:
             filtered_egos = np.append(filtered_egos, ego)
-    print(filtered_egos)
-    print(len(filtered_egos))
+    return filtered_egos
 
 
 if __name__ == "__main__":
     dataframe = dask_load_csv()
-    egos_list_consecutive_months(dataframe, 2, 6)
+    egos_arr = egos_list_consecutive_months(dataframe, 2, 6)
+    print(egos_arr)
+    np.savetxt('../output/sunbelt/results.txt', egos_arr, fmt='%s')
