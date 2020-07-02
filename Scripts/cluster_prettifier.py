@@ -118,16 +118,23 @@ class cluster_prettifier:
             auth_clust_dict[line['author']] = line['cluster']
         return auth_clust_dict
 
-    def prettify(self):
+    '''def prettify(self):
         json_list = self.get_jsons()
         auth_clu_dict = self.get_author_cluster_dict()
         pretty_jsons = []
         for jsonf in json_list:
             print("_"*40)
             pretty_json = self.prettify_json(jsonf, auth_clu_dict)
-            pretty_jsons.append(json.dumps(pretty_json,  indent=4))
         print("_"*40)
-        return pretty_jsons
+        return pretty_jsons'''
+
+    def prettify(self):
+        path = '/home/data/algopol/algopolapp/dataset03/' + \
+            self.id_ego + '/statuses.jsons.gz'
+        file = gzip.open(path, 'rt', encoding='utf-8')
+        auth_clu_dict = self.get_author_cluster_dict()
+        for line in file:
+            self.prettify_json(json.loads(line), auth_clu_dict)
 
 
 def get_arg_parser():
