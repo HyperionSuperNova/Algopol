@@ -80,8 +80,8 @@ class cluster_prettifier:
             keys += ', ' + key
         print(f"\tkeywords: {color}{keys[1:len(keys)]}")
 
-    def process_from(self, jsonf, efrom, color):
-        if jsonf[efrom] == self.id_ego:
+    def process_from(self, efrom, color):
+        if efrom == self.id_ego:
             print(f"\tfrom: {color}ego")
         else:
             print(f"\tfrom: {color}{efrom}")
