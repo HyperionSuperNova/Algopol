@@ -98,17 +98,17 @@ class cluster_prettifier:
         print(f"\tguessed_type: {color}{guessed_type}")
         print(f"\tfrom: {color}{efrom}")
         print(f"\tid: {color}{eid}")
-        if "keywords" in jsonf.keys():
+        if "keywords" in jsonf:
             self.process_keywords(jsonf, color)
         if "link" in jsonf.keys():
             link_site = jsonf["link"]['site']
             print(f"\tlink.site: {color}{link_site}")
-        if "tags" in jsonf.keys():
+        if "tags" in jsonf:
             self.process_tags(jsonf, dict_auth_clust)
-        if "comments" in jsonf.keys():
+        if "comments" in jsonf:
             self.process_comments(jsonf, dict_auth_clust)
             print('\t\t' + ('-'*10))
-        if "likes" in jsonf.keys():
+        if "likes" in jsonf:
             self.process_likes(jsonf, dict_auth_clust)
 
     def get_author_cluster_dict(self):
