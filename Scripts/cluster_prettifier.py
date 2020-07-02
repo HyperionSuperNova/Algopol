@@ -3,9 +3,6 @@ import gzip
 import argparse
 import os
 import csv
-from pygments import highlight
-from pygments.lexers.data import JsonLexer
-from pygments.formatters.terminal import TerminalFormatter
 from datetime import datetime
 from collections import OrderedDict
 from colorama import Fore, Back, Style
