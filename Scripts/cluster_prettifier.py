@@ -35,7 +35,7 @@ class cluster_prettifier:
         dict_auth_clust = self.get_author_cluster_dict()
         ego_color = ''
         c1_color = Fore.RED
-        c2_color = Fore.BLUE
+        c2_color = Fore.LIGHTBLUE_EX
         other_color = Fore.LIGHTBLACK_EX
         color = ''
         created_timestamp = int(jsonf["created"])
@@ -92,6 +92,8 @@ class cluster_prettifier:
                     color = c2_color
                 elif(dict_auth_clust[cfrom] != 'ego'):
                     color = other_color
+                else:
+                    color = ''
                 print(f"\t\ttime: {color}{comment_time}")
                 print(f"\t\tfrom: {color}{cfrom}")
                 if "keywords" in jsonf.keys():
@@ -110,7 +112,7 @@ class cluster_prettifier:
                 elif(like not in dict_auth_clust.keys() or like != self.id_ego):
                     color = other_color
                 likes += f', {color}{like}'
-            print(f"\tlikes: {color}{likes}")
+            print(f"\tlikes: {color}{likes[1:len(likes)]}")
 
     def get_author_cluster_dict(self):
         auth_clust_dict = dict()
