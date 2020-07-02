@@ -151,7 +151,7 @@ def get_arg_parser():
 
 if __name__ == "__main__":
     args, unknown = get_arg_parser()
-    init(autoreset=True)
+    init(autoreset=True, strip=False)
     if args.ego is not None and args.cluster1 is not None and args.cluster2 is not None:
         pretty = cluster_prettifier(args.ego, args.cluster1, args.cluster2)
     elif len(sys.argv) == 4:
