@@ -81,7 +81,6 @@ class cluster_prettifier:
         print(f"\tkeywords: {color}{keys[1:len(keys)]}")
 
     def prettify_json(self, jsonf, dict_auth_clust):
-        init(autoreset=True)
         created_timestamp = int(jsonf["created"])
         created_date = str(datetime.fromtimestamp(
             created_timestamp).strftime('%d-%B-%Y %H:%M:%S'))
@@ -152,6 +151,7 @@ def get_arg_parser():
 
 if __name__ == "__main__":
     args, unknown = get_arg_parser()
+    init(autoreset=True)
     if args.ego is not None and args.cluster1 is not None and args.cluster2 is not None:
         pretty = cluster_prettifier(args.ego, args.cluster1, args.cluster2)
     elif len(sys.argv) == 4:
