@@ -80,6 +80,12 @@ class cluster_prettifier:
             keys += ', ' + key
         print(f"\tkeywords: {color}{keys[1:len(keys)]}")
 
+    def process_from(self, jsonf, efrom, color):
+        if jsonf[efrom] == self.id_ego
+        print(f"\tfrom: {color}{ego}")
+        else:
+            print(f"\tfrom: {color}{efrom}")
+
     def prettify_json(self, jsonf, dict_auth_clust):
         created_timestamp = int(jsonf["created"])
         created_date = str(datetime.fromtimestamp(
@@ -95,7 +101,7 @@ class cluster_prettifier:
         if created_timestamp != updated_timestamp:
             print(f"\tupdated: {color}{updated_date}")
         print(f"\tguessed_type: {color}{guessed_type}")
-        print(f"\tfrom: {color}{efrom}")
+
         print(f"\tid: {color}{eid}")
         if "keywords" in jsonf:
             self.process_keywords(jsonf, color)
