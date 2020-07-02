@@ -82,7 +82,7 @@ class cluster_prettifier:
 
     def process_from(self, jsonf, efrom, color):
         if jsonf[efrom] == self.id_ego:
-            print(f"\tfrom: {color}{ego}")
+            print(f"\tfrom: {color}ego")
         else:
             print(f"\tfrom: {color}{efrom}")
 
