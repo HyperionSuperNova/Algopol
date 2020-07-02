@@ -5,7 +5,7 @@ import os
 import csv
 from datetime import datetime
 from collections import OrderedDict
-from colorama import Fore, Back, Style
+from colorama import Fore, Back, Style, init
 import sys
 
 
@@ -30,13 +30,59 @@ class cluster_prettifier:
         file = gzip.open(files[0], 'rt')
         return csv.DictReader(file)
 
-    def prettify_json(self, jsonf):
-        dict_auth_clust = self.get_author_cluster_dict()
-        ego_color = ''
+    def get_color(self, dico, key):
         c1_color = Fore.RED
         c2_color = Fore.LIGHTBLUE_EX
         other_color = Fore.LIGHTBLACK_EX
         color = ''
+        if(key in dico.keys() and dico[key] == self.cluster_nb1):
+            color = c1_color
+        elif(key in dico.keys() and dico[key] == self.cluster_nb2):
+            color = c2_color
+        elif(key not in dico.keys() or key != self.id_ego):
+            color = other_color
+        return color
+
+    def process_comments(self, jsonf, dico):
+        print(f"\tcomments:")
+        for comment in jsonf['comments']:
+            print('\t\t' + ('-'*10))
+            cfrom = comment["from"]
+            time = int(comment["time"])
+            comment_time = str(datetime.fromtimestamp(
+                time).strftime('%d-%B-%Y %H:%M:%S'))
+            color = self.get_color(dico, cfrom)
+            print(f"\t\ttime: {color}{comment_time}")
+            print(f"\t\tfrom: {color}{cfrom}")
+            if "keywords" in jsonf.keys():
+                keys = ''
+                for key in jsonf['keywords'].keys():
+                    keys += ', ' + key
+                print(f"\t\tkeywords: {color}{keys[1:len(keys)]}")
+
+    def process_likes(self, jsonf, dico):
+        likes = ''
+        for like in jsonf['likes']:
+            color = self.get_color(dico, like)
+            likes += f', {color}{like}'
+        print(f"\tlikes: {color}{likes[1:len(likes)]}")
+
+    def process_tags(self, jsonf, dico):
+        tags = ''
+        for tag in jsonf['tags']:
+            color = self.get_color(dico, tag)
+            tags += f', {color}{tag}'
+        print(f"\ttags: {color}{tags[1:len(tags)]}")
+
+    def process_keywords(self, jsonf, color):
+        keys = ''
+        for key in jsonf['keywords'].keys():
+            keys += ', ' + key
+        print(f"\tkeywords: {color}{keys[1:len(keys)]}")
+
+    def prettify_json(self, jsonf):
+        init(autoreset=True)
+        dict_auth_clust = self.get_author_cluster_dict()
         created_timestamp = int(jsonf["created"])
         created_date = str(datetime.fromtimestamp(
             created_timestamp).strftime('%d-%B-%Y %H:%M:%S'))
@@ -46,12 +92,7 @@ class cluster_prettifier:
         guessed_type = jsonf["guessed_type"]
         efrom = jsonf["from"]
         eid = jsonf["id"]
-        if(dict_auth_clust[efrom] == self.cluster_nb1):
-            color = c1_color
-        elif(dict_auth_clust[efrom] == self.cluster_nb2):
-            color = c2_color
-        elif(dict_auth_clust[efrom] != 'ego'):
-            color = other_color
+        color = self.get_color(dict_auth_clust, efrom)
         print(f"\tcreated: {color}{created_date}")
         if created_timestamp != updated_timestamp:
             print(f"\tupdated: {color}{updated_date}")
@@ -59,59 +100,17 @@ class cluster_prettifier:
         print(f"\tfrom: {color}{efrom}")
         print(f"\tid: {color}{eid}")
         if "keywords" in jsonf.keys():
-            keys = ''
-            for key in jsonf['keywords'].keys():
-                keys += ', ' + key
-            print(f"\tkeywords: {color}{keys[1:len(keys)]}")
+            self.process_keywords(jsonf, color)
         if "link" in jsonf.keys():
             link_site = jsonf["link"]['site']
             print(f"\tlink.site: {color}{link_site}")
         if "tags" in jsonf.keys():
-            tags = ''
-            for tag in jsonf['tags']:
-                if(tag in dict_auth_clust.keys() and dict_auth_clust[tag] == self.cluster_nb1):
-                    color = c1_color
-                elif(tag in dict_auth_clust.keys() and dict_auth_clust[tag] == self.cluster_nb2):
-                    color = c2_color
-                elif(tag not in dict_auth_clust.keys() or tag != self.id_ego):
-                    color = other_color
-                tags += f', {color}{tag}'
-            print(f"\ttags: {color}{tags[1:len(tags)]}")
+            self.process_tags(jsonf, dict_auth_clust)
         if "comments" in jsonf.keys():
-            print(f"\tcomments:")
-            for comment in jsonf['comments']:
-                print('\t\t' + ('-'*10))
-                cfrom = comment["from"]
-                time = int(comment["time"])
-                comment_time = str(datetime.fromtimestamp(
-                    created_timestamp).strftime('%d-%B-%Y %H:%M:%S'))
-                if(dict_auth_clust[cfrom] == self.cluster_nb1):
-                    color = c1_color
-                elif(dict_auth_clust[cfrom] == self.cluster_nb2):
-                    color = c2_color
-                elif(dict_auth_clust[cfrom] != 'ego'):
-                    color = other_color
-                else:
-                    color = ''
-                print(f"\t\ttime: {color}{comment_time}")
-                print(f"\t\tfrom: {color}{cfrom}")
-                if "keywords" in jsonf.keys():
-                    keys = ''
-                    for key in jsonf['keywords'].keys():
-                        keys += ', ' + key
-                    print(f"\t\tkeywords: {color}{keys[1:len(keys)]}")
+            self.process_comments(jsonf, dict_auth_clust)
             print('\t\t' + ('-'*10))
         if "likes" in jsonf.keys():
-            likes = ''
-            for like in jsonf['likes']:
-                if(like in dict_auth_clust.keys() and dict_auth_clust[like] == self.cluster_nb1):
-                    color = c1_color
-                elif(like in dict_auth_clust.keys() and dict_auth_clust[like] == self.cluster_nb2):
-                    color = c2_color
-                elif(like not in dict_auth_clust.keys() or like != self.id_ego):
-                    color = other_color
-                likes += f', {color}{like}'
-            print(f"\tlikes: {color}{likes[1:len(likes)]}")
+            self.process_likes(jsonf, dict_auth_clust)
 
     def get_author_cluster_dict(self):
         auth_clust_dict = dict()
@@ -136,8 +135,10 @@ def get_arg_parser():
     parser = argparse.ArgumentParser()
     parser._actions.pop()
     parser.add_argument("-e", '--ego', action='store', required=False)
-    parser.add_argument('-c1', '--cluster1', action="store", required=False)
-    parser.add_argument('-c2', '--cluster2', action='store', required=False)
+    parser.add_argument('-c1', '--cluster1',
+                        action="store", required=False)
+    parser.add_argument('-c2', '--cluster2',
+                        action='store', required=False)
     return parser.parse_known_args()
 
 
