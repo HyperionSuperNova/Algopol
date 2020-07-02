@@ -56,7 +56,7 @@ class cluster_prettifier:
             print(f"\t\tfrom: {color}{cfrom}")
             if "keywords" in jsonf:
                 keys = ''
-                for key in comments['keywords']:
+                for key in comment['keywords']:
                     keys += ', ' + key
                 print(f"\t\tkeywords: {color}{keys[1:len(keys)]}")
 
