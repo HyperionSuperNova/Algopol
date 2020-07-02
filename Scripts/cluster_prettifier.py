@@ -159,6 +159,4 @@ if __name__ == "__main__":
     else:
         print('Not Enough Arguments')
         exit(0)
-    json_list = pretty.prettify()
-    for x in json_list:
-        print(x.encode('utf-8').decode('unicode_escape'))
+    pretty.prettify()
