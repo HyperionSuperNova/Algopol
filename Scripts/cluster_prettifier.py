@@ -101,7 +101,7 @@ class cluster_prettifier:
         if created_timestamp != updated_timestamp:
             print(f"\tupdated: {color}{updated_date}")
         print(f"\tguessed_type: {color}{guessed_type}")
-
+        self.process_from(jsonf, efrom, color)
         print(f"\tid: {color}{eid}")
         if "keywords" in jsonf:
             self.process_keywords(jsonf, color)
