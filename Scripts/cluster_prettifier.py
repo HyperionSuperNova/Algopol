@@ -159,4 +159,14 @@ if __name__ == "__main__":
     else:
         print('Not Enough Arguments')
         exit(0)
-    pretty.prettify()
+    try:
+        pretty.prettify()
+    except IOError:
+        try:
+            sys.stdout.close()
+        except IOError:
+            pass
+        try:
+            sys.stderr.close()
+        except IOError:
+            pass
