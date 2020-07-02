@@ -80,9 +80,8 @@ class cluster_prettifier:
             keys += ', ' + key
         print(f"\tkeywords: {color}{keys[1:len(keys)]}")
 
-    def prettify_json(self, jsonf):
+    def prettify_json(self, jsonf, dict_auth_clust):
         init(autoreset=True)
-        dict_auth_clust = self.get_author_cluster_dict()
         created_timestamp = int(jsonf["created"])
         created_date = str(datetime.fromtimestamp(
             created_timestamp).strftime('%d-%B-%Y %H:%M:%S'))
@@ -125,7 +124,7 @@ class cluster_prettifier:
         pretty_jsons = []
         for jsonf in json_list:
             print("_"*40)
-            pretty_json = self.prettify_json(jsonf)
+            pretty_json = self.prettify_json(jsonf, auth_clu_dict)
             pretty_jsons.append(json.dumps(pretty_json,  indent=4))
         print("_"*40)
         return pretty_jsons
