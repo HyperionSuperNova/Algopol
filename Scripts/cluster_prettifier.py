@@ -54,7 +54,7 @@ class cluster_prettifier:
             color = self.get_color(dico, cfrom)
             print(f"\t\ttime: {color}{comment_time}")
             print(f"\t\tfrom: {color}{cfrom}")
-            if "keywords" in jsonf:
+            if "keywords" in comment:
                 keys = ''
                 for key in comment['keywords']:
                     keys += ', ' + key
