@@ -134,7 +134,9 @@ class cluster_prettifier:
         file = gzip.open(path, 'rt', encoding='utf-8')
         auth_clu_dict = self.get_author_cluster_dict()
         for line in file:
+            print("_"*40)
             self.prettify_json(json.loads(line), auth_clu_dict)
+        print("_"*40)
 
 
 def get_arg_parser():
