@@ -17,12 +17,14 @@ class cluster_prettifier:
         self.cluster_nb2 = cluster_nb2
 
     def get_jsons(self):
-        path = '../sample_json/' + self.id_ego + '/statuses.jsons.gz'
+        path = '/home/data/algopol/algopolapp/dataset03/' + \
+            self.id_ego + '/statuses.jsons.gz'
         file = gzip.open(path, 'rt', encoding='utf-8')
         return [json.loads(line) for line in file]
 
     def get_csv(self):
-        path = '../sample_data_sorted/' + self.id_ego[0] + '/'
+        path = '/home/data/algopol/user/nabil/Alter-cluster-timestamp-sorted/' + \
+            self.id_ego[0] + '/'
         files = [os.path.join(path, i) for i in os.listdir(path) if os.path.isfile(
             os.path.join(path, i)) and i.startswith(self.id_ego)]
         file = gzip.open(files[0], 'rt')
