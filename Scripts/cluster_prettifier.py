@@ -35,11 +35,11 @@ class cluster_prettifier:
         c2_color = Fore.LIGHTBLUE_EX
         other_color = Fore.LIGHTBLACK_EX
         color = ''
-        if(key in dico.keys() and dico[key] == self.cluster_nb1):
+        if(key in dico and dico[key] == self.cluster_nb1):
             color = c1_color
-        elif(key in dico.keys() and dico[key] == self.cluster_nb2):
+        elif(key in dico and dico[key] == self.cluster_nb2):
             color = c2_color
-        elif(key not in dico.keys() or key != self.id_ego):
+        elif(key not in dico or key != self.id_ego):
             color = other_color
         return color
 
@@ -54,9 +54,9 @@ class cluster_prettifier:
             color = self.get_color(dico, cfrom)
             print(f"\t\ttime: {color}{comment_time}")
             print(f"\t\tfrom: {color}{cfrom}")
-            if "keywords" in jsonf.keys():
+            if "keywords" in jsonf:
                 keys = ''
-                for key in jsonf['keywords'].keys():
+                for key in jsonf['keywords']:
                     keys += ', ' + key
                 print(f"\t\tkeywords: {color}{keys[1:len(keys)]}")
 
@@ -76,7 +76,7 @@ class cluster_prettifier:
 
     def process_keywords(self, jsonf, color):
         keys = ''
-        for key in jsonf['keywords'].keys():
+        for key in jsonf['keywords']:
             keys += ', ' + key
         print(f"\tkeywords: {color}{keys[1:len(keys)]}")
 
@@ -105,7 +105,7 @@ class cluster_prettifier:
         print(f"\tid: {color}{eid}")
         if "keywords" in jsonf:
             self.process_keywords(jsonf, color)
-        if "link" in jsonf.keys():
+        if "link" in jsonf:
             link_site = jsonf["link"]['site']
             print(f"\tlink.site: {color}{link_site}")
         if "tags" in jsonf:
