@@ -2,7 +2,7 @@ import dask.dataframe as dd
 import pandas as pd
 import numpy as np
 
-cluster_order_path = '../Sunbelt/Cluster_order/sample/*'
+cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
 
 
 def prepare_dataframe(dataframe):
@@ -27,19 +27,41 @@ def dask_load_csv():
     return prepare_dataframe(df_dask)
 
 
-def egos_list_consecutive_months(dataframe, ratio, consecutive_months):
+def is_cons_month(monthdiff, val):
+    count = 0
+    for x in monthdiff:
+        if count == val:
+            return True
+        if x == 1 or x == -11:
+            count += 1
+        else:
+            count = 0
+    return False
+
+
+def egos_list_consecutive_months(dataframe, ratio, consecutive_months, val_brute):
     all_egos = dataframe.egos.unique()
     filtered_egos = np.array([])
     for ego in all_egos:
-        filter = dataframe[(
-            dataframe.egos == ego) & (dataframe.ratio_over_second >= ratio)].sort_values('month_year')
-        if filter['month'].diff().cumsum().max() >= consecutive_months:
-            filtered_egos = np.append(filtered_egos, ego)
+        count_clust = 0
+        filter = dataframe[(dataframe.egos == ego) & (
+            dataframe.ratio_over_second >= ratio) & (dataframe.nb_posts >= val_brute)]
+        ego_clusters = filter.first_cluster.unique()
+        for cluster in ego_clusters:
+            filter2 = filter[(filter.first_cluster == cluster)
+                             ].sort_values('month_year')
+            filter2['monthdiff'] = filter.groupby(
+                'first_cluster').month.diff().fillna(1).astype(int)
+            if(is_cons_month(filter2.monthdiff.to_list(), consecutive_months)):
+                count_clust += 1
+            if count_clust >= 2:
+                filtered_egos = np.append(filtered_egos, ego)
+                break
     return filtered_egos
 
 
 if __name__ == "__main__":
     dataframe = dask_load_csv()
-    egos_arr = egos_list_consecutive_months(dataframe, 2, 6)
-    print(egos_arr)
-    np.savetxt('../output/sunbelt/results.txt', egos_arr, fmt='%s')
+    egos_arr = egos_list_consecutive_months(dataframe, 2, 6, 10)
+    np.savetxt(
+        '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/results.txt', egos_arr, fmt='%s')
