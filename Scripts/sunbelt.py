@@ -64,4 +64,4 @@ if __name__ == "__main__":
     dataframe = dask_load_csv()
     egos_arr = egos_list_consecutive_months(dataframe, 2, 6, 10)
     np.savetxt(
-        '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/results.txt', egos_arr, fmt='%s')
+        '/home/data/algopol/user/nabil/Sunbelt/results.txt', egos_arr, fmt='%s')
