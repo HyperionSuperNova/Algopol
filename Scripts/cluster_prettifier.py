@@ -53,25 +53,33 @@ class cluster_prettifier:
                 time).strftime('%d-%B-%Y %H:%M:%S'))
             color = self.get_color(dico, cfrom)
             print(f"\t\ttime: {color}{comment_time}")
-            print(f"\t\tfrom: {color}{cfrom}")
+            if cfrom == self.id_ego:
+                print(f"\t\tfrom: {color}ego")
+            else:
+                print(f"\t\tfrom: {color}{cfrom}")
             if "keywords" in comment:
                 keys = ''
                 for key in comment['keywords']:
                     keys += ', ' + key
                 print(f"\t\tkeywords: {color}{keys[1:len(keys)]}")
 
+    def check_ego(self, val, color):
+        if val == self.id_ego:
+            return f', {color}ego'
+        return f', {color}{val}'
+
     def process_likes(self, jsonf, dico):
         likes = ''
         for like in jsonf['likes']:
             color = self.get_color(dico, like)
-            likes += f', {color}{like}'
+            likes += self.check_ego(like, color)
         print(f"\tlikes: {color}{likes[1:len(likes)]}")
 
     def process_tags(self, jsonf, dico):
         tags = ''
         for tag in jsonf['tags']:
             color = self.get_color(dico, tag)
-            tags += f', {color}{tag}'
+            tags += self.check_ego(tag, color)
         print(f"\ttags: {color}{tags[1:len(tags)]}")
 
     def process_keywords(self, jsonf, color):
