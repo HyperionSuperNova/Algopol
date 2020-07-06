@@ -3,7 +3,7 @@ import os
 #alter_count_path = '../Alter-count-csv-plots/'
 #ego_date_cluster_path = '../output/sunbelt/filtered_egos_month_year_cluster.csv'
 #output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_alter_count.csv'
-alter_count_path = '/home/data/algopol/user/nabil/Alter-cluster-timestamp-sorted'
+alter_count_path = '/home/data/algopol/user/nabil/Alter-cluster-timestamp-sorted/'
 ego_date_cluster_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
 output_csv_path = './home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster_altercount.csv'
 
