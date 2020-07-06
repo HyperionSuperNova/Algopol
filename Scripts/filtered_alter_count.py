@@ -40,7 +40,7 @@ def join_files(csv1, csv_dico):
                     result.append({'ego': row['ego'], 'cluster': row['cluster'],
                                    'month': row['month'], 'year': row['year'], 'alter_count': row2['AlterCount']})
         except KeyError as ke:
-            continue
+            pass
 
     return result
 
