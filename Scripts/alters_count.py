@@ -101,9 +101,6 @@ def generate_plot_from_dict(id_ego, dico, output_path):
     final_path = os.path.join(output_path, 'plots')
     if not os.path.exists(final_path):
         os.makedirs(final_path)
-    final_path = os.path.join(output_path, id_ego[0])
-    if not os.path.exists(final_path):
-        os.makedirs(final_path)
     dico = dict_to_csvdict(dico)
     if(len(dico) == 0):
         return
