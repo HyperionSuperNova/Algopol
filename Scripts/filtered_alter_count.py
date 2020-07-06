@@ -41,11 +41,16 @@ def join_files(csv1, csv_dico):
                                    'month': row['month'], 'year': row['year'], 'alter_count': row2['AlterCount']})
         except KeyError as ke:
             pass
-
     return result
 
 
+def prepare_csv():
+    if os.path.exists(output_csv_path):
+        os.remove(output_csv_path)
+
+
 if __name__ == "__main__":
+    prepare_csv()
     ego_date_cluster_dico = csv.DictReader(open(ego_date_cluster_path))
     alter_count_filtered_list = filtered_file(ego_date_cluster_dico)
     ego_date_cluster_dico = csv.DictReader(open(ego_date_cluster_path))
