@@ -24,9 +24,6 @@ def write_to_csv(id_ego, dico, output_path):
     final_path = os.path.join(output_path, 'csv')
     if not os.path.exists(final_path):
         os.makedirs(final_path)
-    final_path = os.path.join(final_path, id_ego[0])
-    if not os.path.exists(final_path):
-        os.makedirs(final_path)
     csv_file = os.path.join(final_path, id_ego + '_alter-count.csv')
     csv_columns = ['Month', 'Year', 'AlterCount']
     dict_data = dict_to_csvdict(dico)
