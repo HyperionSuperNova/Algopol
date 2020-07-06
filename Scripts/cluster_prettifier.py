@@ -31,8 +31,8 @@ class cluster_prettifier:
         return csv.DictReader(file)
 
     def get_color(self, dico, key):
-        c1_color = Fore.RED
-        c2_color = Fore.LIGHTBLUE_EX
+        c1_color = Fore.LIGHTBLUE_EX
+        c2_color = Fore.RED
         other_color = Fore.LIGHTBLACK_EX
         color = ''
         if(key in dico and dico[key] == self.cluster_nb1):
