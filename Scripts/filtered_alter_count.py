@@ -34,10 +34,14 @@ def join_files(csv1, csv_dico):
         else:
             cmp = 0
         ego_id = row['ego']
-        for row2 in csv_dico[row['ego']][cmp]:
-            if row['month'] == row2['Month'] and row['year'] == row2['Year']:
-                result.append({'ego': row['ego'], 'cluster': row['cluster'],
-                               'month': row['month'], 'year': row['year'], 'alter_count': row2['AlterCount']})
+        try:
+            for row2 in csv_dico[row['ego']][cmp]:
+                if row['month'] == row2['Month'] and row['year'] == row2['Year']:
+                    result.append({'ego': row['ego'], 'cluster': row['cluster'],
+                                   'month': row['month'], 'year': row['year'], 'alter_count': row2['AlterCount']})
+        except KeyError as ke:
+            continue
+
     return result
 
 
