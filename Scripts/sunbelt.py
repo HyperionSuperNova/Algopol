@@ -4,12 +4,12 @@ import numpy as np
 import os
 import csv
 
-#cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
-#output_egos_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_id.txt'
-#output_csv_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
-cluster_order_path = '../sunbelt/Cluster_order/sample/*'
-output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
-output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
+cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
+output_egos_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_id.txt'
+output_csv_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
+#cluster_order_path = '../sunbelt/Cluster_order/sample/*'
+#output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
+#output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
 
 
 def prepare_dataframe(dataframe):
