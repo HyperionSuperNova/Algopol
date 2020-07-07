@@ -21,7 +21,7 @@ json_path = '/home/data/algopol/algopolapp/dataset03/'
 
 
 def dict_to_csvdict(dico_csv, dico_json):
-    return [{'Month': k[0], 'Year':k[1], 'AlterCount':dico_csv[k], 'cumulated_friends':dico_json[k][0], 'friends_per_month':dico_json[k][1]} for k in dico_csv]
+    return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':dico_json[k][0], 'approved_friends':dico_json[k][1]} for k in dico_csv]
 
 
 def write_to_csv(id_ego, dicocsv, dicojson, output_path):
@@ -29,8 +29,8 @@ def write_to_csv(id_ego, dicocsv, dicojson, output_path):
     if not os.path.exists(final_path):
         os.makedirs(final_path)
     csv_file = os.path.join(final_path, id_ego + '_alter-count.csv')
-    csv_columns = ['Month', 'Year', 'AlterCount',
-                   'cumulated_friends', 'friends_per_month']
+    csv_columns = ['Month', 'Year', 'recent_active',
+                   'recent_friends', 'approved_friends']
     dict_data = dict_to_csvdict(dicocsv, dicojson)
     try:
         with open(csv_file, 'w') as csvfile:
