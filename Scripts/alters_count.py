@@ -19,8 +19,13 @@ sns.set()
 json_path = '/home/data/algopol/algopolapp/dataset03/'
 #json_path = '../sample_json/'
 
+countempty = 0
+
 
 def dict_to_csvdict(dico_csv, dico_json):
+    if len(dico_json == 0):
+        countempty += 1
+        return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':'', 'approved_friends':''} for k in dico_csv]
     return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':dico_json[k][0], 'approved_friends':dico_json[k][1]} for k in dico_csv]
 
 
@@ -220,9 +225,9 @@ if __name__ == "__main__":
         output_path = Path(args.output)
         for file in os.listdir(directory_path):
             filename = os.fsdecode(file)
-            print(filename)
             if filename.endswith(".csv.gz"):
                 execution(os.path.join(args.directory, filename), output_path)
                 continue
             else:
                 continue
+    print(countempty)
