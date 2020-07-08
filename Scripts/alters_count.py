@@ -23,7 +23,7 @@ countempty = 0
 
 
 def dict_to_csvdict(dico_csv, dico_json):
-    if len(dico_json == 0):
+    if len(dico_json) == 0:
         countempty += 1
         return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':'', 'approved_friends':''} for k in dico_csv]
     return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':dico_json[k][0], 'approved_friends':dico_json[k][1]} for k in dico_csv]
