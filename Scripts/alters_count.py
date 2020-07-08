@@ -63,6 +63,7 @@ def get_first_approval(jsons):
     first_json = jsons.pop()
     while(first_json['guessed_type'] != 'EapprouveAmi' and len(first_json) > 0):
         first_json = jsons.pop(0)
+        print(first_json)
     return first_json
 
 
