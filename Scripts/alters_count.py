@@ -77,8 +77,8 @@ def approved_friend_per_month(id_ego):
     if len(jsons) == 0:
         return {}
     first_json = get_first_approval(jsons)
-    if len(first_json == 0):
-        return by_month
+    if len(first_json) == 0:
+        return {}
     nb_new = 0
     nb_new_per_month = 0
     by_month = {}
