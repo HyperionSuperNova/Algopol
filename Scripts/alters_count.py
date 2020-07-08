@@ -74,6 +74,8 @@ def get_jsons_as_list(id_ego):
 
 def approved_friend_per_month(id_ego):
     jsons = get_jsons_as_list(id_ego)
+    if len(jsons) == 0:
+        return {}
     first_json = get_first_approval(jsons)
     nb_new = 0
     nb_new_per_month = 0
