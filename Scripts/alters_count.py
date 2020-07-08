@@ -16,8 +16,8 @@ from dateutil.relativedelta import *
 
 sns.set()
 
-json_path = '/home/data/algopol/algopolapp/dataset03/'
-#json_path = '../sample_json/'
+#json_path = '/home/data/algopol/algopolapp/dataset03/'
+json_path = '../sample_json/'
 
 
 def dict_to_csvdict(dico_csv, dico_json):
@@ -183,6 +183,10 @@ def generate_plot_from_dict(id_ego, dico, dico_json, output_path):
     ax.plot('date',
             'recent_active',
             color='purple', data=dico_df)
+    dico_df = dico_df.replace('', 0)
+    ax.plot('date', 'recent_friends', color='blue', data=dico_df)
+    ax.plot('date', 'approved_friends', color='red', data=dico_df)
+    ax.legend()
     ax.set(xlabel="Date",
            ylabel="Nombre d'Alter récents", title=id_ego)
     ax.xaxis.set_major_formatter(date_form)
