@@ -16,8 +16,8 @@ from dateutil.relativedelta import *
 
 sns.set()
 
-#json_path = '/home/data/algopol/algopolapp/dataset03/'
-json_path = '../sample_json/'
+json_path = '/home/data/algopol/algopolapp/dataset03/'
+#json_path = '../sample_json/'
 
 
 def dict_to_csvdict(dico_csv, dico_json):
