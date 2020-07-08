@@ -111,7 +111,7 @@ def approved_friend_per_month(id_ego):
                             by_month[month_year] = (nb_new, nb_new_per_month)
                             dt_before = dt_before + relativedelta(months=+1)
                             nb_new_per_month = 0
-                        nb_new += 1
+                    nb_new += 1
     return by_month
 
 
