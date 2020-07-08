@@ -92,25 +92,26 @@ def approved_friend_per_month(id_ego):
 
     for jsonf in jsons:
         timestamp = int(jsonf['created'])
-
-        if(jsonf['guessed_type'] == 'EapprouveAmi'):
-            dt_timestamp = datetime.fromtimestamp(timestamp)
-            month_next_year = (dt_timestamp.month, dt_timestamp.year + 1)
-            dt_last_of_next_month = last_day_of_month(dt_timestamp)
-            month_year = (dt_timestamp.month, dt_timestamp.year)
-            for alter in jsonf['tags']:
-                if alter not in alters and alter != id_ego:
-                    add_value_to_dict(old_alters, month_next_year, 1)
-                    nb_new_per_month += 1
-            if int((dt_last_of_next_month - dt_before).days) >= 28:
-                while dt_before < dt_timestamp:
-                    month_year = (dt_before.month, dt_before.year)
-                    if month_year in old_alters:
-                        nb_new -= old_alters[month_year]
-                    by_month[month_year] = (nb_new, nb_new_per_month)
-                    dt_before = dt_before + relativedelta(months=+1)
-                    nb_new_per_month = 0
-            nb_new += 1
+        if 'guessed_type' in jsonf:
+            if(jsonf['guessed_type'] == 'EapprouveAmi'):
+                dt_timestamp = datetime.fromtimestamp(timestamp)
+                month_next_year = (dt_timestamp.month, dt_timestamp.year + 1)
+                dt_last_of_next_month = last_day_of_month(dt_timestamp)
+                month_year = (dt_timestamp.month, dt_timestamp.year)
+                if 'tags' in jsonf:
+                    for alter in jsonf['tags']:
+                        if alter not in alters and alter != id_ego:
+                            add_value_to_dict(old_alters, month_next_year, 1)
+                            nb_new_per_month += 1
+                    if int((dt_last_of_next_month - dt_before).days) >= 28:
+                        while dt_before < dt_timestamp:
+                            month_year = (dt_before.month, dt_before.year)
+                            if month_year in old_alters:
+                                nb_new -= old_alters[month_year]
+                            by_month[month_year] = (nb_new, nb_new_per_month)
+                            dt_before = dt_before + relativedelta(months=+1)
+                            nb_new_per_month = 0
+                        nb_new += 1
     return by_month
 
 
