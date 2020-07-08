@@ -19,12 +19,9 @@ sns.set()
 json_path = '/home/data/algopol/algopolapp/dataset03/'
 #json_path = '../sample_json/'
 
-countempty = 0
-
 
 def dict_to_csvdict(dico_csv, dico_json):
     if len(dico_json) == 0:
-        countempty += 1
         return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':'', 'approved_friends':''} for k in dico_csv]
     return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':dico_json[k][0], 'approved_friends':dico_json[k][1]} for k in dico_csv]
 
@@ -173,7 +170,7 @@ def generate_plot_from_dict(id_ego, dico, dico_json, output_path):
     fig, ax = plt.subplots(figsize=(12, 12))
     date_form = DateFormatter("%m-%Y")
     ax.plot('date',
-            'AlterCount',
+            'recent_active',
             color='purple', data=dico_df)
     ax.set(xlabel="Date",
            ylabel="Nombre d'Alter récents", title=id_ego)
@@ -230,4 +227,3 @@ if __name__ == "__main__":
                 continue
             else:
                 continue
-    print(countempty)
