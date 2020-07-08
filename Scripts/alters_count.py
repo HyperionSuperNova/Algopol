@@ -23,7 +23,15 @@ json_path = '/home/data/algopol/algopolapp/dataset03/'
 def dict_to_csvdict(dico_csv, dico_json):
     if len(dico_json) == 0:
         return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':'', 'approved_friends':''} for k in dico_csv]
-    return [{'Month': k[0], 'Year':k[1], 'recent_active':dico_csv[k], 'recent_friends':dico_json[k][0], 'approved_friends':dico_json[k][1]} for k in dico_csv]
+    L = []
+    for k in dico_csv:
+        if k in dico_json:
+            L.append({'Month': k[0], 'Year': k[1], 'recent_active': dico_csv[k],
+                      'recent_friends': dico_json[k][0], 'approved_friends': dico_json[k][1]})
+        else:
+            L.append({'Month': k[0], 'Year': k[1], 'recent_active': dico_csv[k],
+                      'recent_friends': '', 'approved_friends': ''})
+    return L
 
 
 def write_to_csv(id_ego, dicocsv, dicojson, output_path):
