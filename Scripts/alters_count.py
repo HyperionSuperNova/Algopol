@@ -61,7 +61,7 @@ def add_value_to_dict(dico, key, val):
 
 def get_first_approval(jsons):
     first_json = jsons.pop()
-    while(first_json['guessed_type'] != 'EapprouveAmi' and len(first_json) != 0):
+    while(first_json['guessed_type'] != 'EapprouveAmi' and len(first_json) > 0):
         first_json = jsons.pop(0)
     return first_json
 
@@ -77,6 +77,8 @@ def approved_friend_per_month(id_ego):
     if len(jsons) == 0:
         return {}
     first_json = get_first_approval(jsons)
+    if len(first_json == 0):
+        return by_month
     nb_new = 0
     nb_new_per_month = 0
     by_month = {}
