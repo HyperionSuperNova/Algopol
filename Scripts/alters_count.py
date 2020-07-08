@@ -61,9 +61,8 @@ def add_value_to_dict(dico, key, val):
 
 def get_first_approval(jsons):
     first_json = jsons.pop()
-    while(first_json['guessed_type'] != 'EapprouveAmi' and len(first_json) > 0):
+    while(first_json['guessed_type'] != 'EapprouveAmi' and len(jsons) > 0):
         first_json = jsons.pop(0)
-    print(first_json)
     return first_json
 
 
