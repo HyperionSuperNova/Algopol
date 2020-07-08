@@ -188,7 +188,7 @@ def generate_plot_from_dict(id_ego, dico, dico_json, output_path):
     ax.xaxis.set_major_formatter(date_form)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
-    plt.savefig(os.path.join(final_path, id_ego+'.png'))
+    plt.savefig(os.path.join(final_path, id_ego+'.svg'), format="svg")
     plt.cla()
     plt.close('all')
 
