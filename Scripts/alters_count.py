@@ -84,11 +84,12 @@ def approved_friend_per_month(id_ego):
     old_alters = {}
     dt_before = last_day_of_month(
         datetime.fromtimestamp(int(first_json['created'])))
-    for alter in first_json['tags']:
-        if alter not in alters and alter != id_ego:
-            nb_new += 1
-            add_value_to_dict(
-                old_alters, (dt_before.month, dt_before.year + 1), 1)
+    if 'tags' in first_json:
+        for alter in first_json['tags']:
+            if alter not in alters and alter != id_ego:
+                nb_new += 1
+                add_value_to_dict(
+                    old_alters, (dt_before.month, dt_before.year + 1), 1)
 
     for jsonf in jsons:
         timestamp = int(jsonf['created'])
