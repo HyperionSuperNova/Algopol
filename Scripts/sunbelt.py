@@ -4,12 +4,12 @@ import numpy as np
 import os
 import csv
 
-cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
-output_egos_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_id.txt'
-output_csv_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
-#cluster_order_path = '../sunbelt/Cluster_order/sample/*'
-#output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
-#output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
+#cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
+#output_egos_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_id.txt'
+#output_csv_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
+cluster_order_path = '../sunbelt/Cluster_order/sample_bugged/*'
+output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
+output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
 
 
 def prepare_dataframe(dataframe):
@@ -44,27 +44,15 @@ def prepare_txt():
         os.remove(output_egos_path)
 
 
-def is_cons_month(monthdiff, val):
-    count = 0
-    for x in monthdiff:
-        if count == val:
-            return True
-        if x == 1 or x == -11:
-            count += 1
-        else:
-            count = 0
-    return False
-
-
 def dom_clust_date(dataframe, consecutive_months):
     count = 0
     for index, row in dataframe.iterrows():
-        if count == consecutive_months:
-            return (row['month'], row['year'], True)
         if row['monthdiff'] == 1 or row['monthdiff'] == -11:
             count += 1
         else:
-            count = 0
+            count = 1
+        if count == consecutive_months:
+            return (row['month'], row['year'], True)
     return('', '', False)
 
 
@@ -87,6 +75,7 @@ def process_cluster(ego_clusters, filter, consecutive_months, ego, dicowriter):
                          ].sort_values('month_year')
         filter2['monthdiff'] = filter.groupby(
             'first_cluster').month.diff().fillna(1).astype(int)
+        print(filter2)
         month, year, is_cons_month = dom_clust_date(
             filter2, consecutive_months)
         if is_cons_month:
