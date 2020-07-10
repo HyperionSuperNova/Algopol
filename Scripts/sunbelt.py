@@ -75,7 +75,6 @@ def process_cluster(ego_clusters, filter, consecutive_months, ego, dicowriter):
                          ].sort_values('month_year')
         filter2['monthdiff'] = filter.groupby(
             'first_cluster').month.diff().fillna(1).astype(int)
-        print(filter2)
         month, year, is_cons_month = dom_clust_date(
             filter2, consecutive_months)
         if is_cons_month:
