@@ -16,7 +16,7 @@ def skip_first_months(dicoreader, months):
     tmp = next(dicoreader)
     first_month, first_year = int(first_row['Month']), int(first_row['Year'])
     tmp_month, tmp_year = int(tmp['Month']), int(tmp['Year'])
-    while diff_month(first_month, tmp_month, first_year, tmp_year) <= months:
+    while diff_month(first_month, tmp_month, first_year, tmp_year) < months:
         tmp = next(dicoreader)
         tmp_month, tmp_year = int(tmp['Month']), int(tmp['Year'])
     return tmp
