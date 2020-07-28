@@ -52,16 +52,18 @@ def get_csvwriter(id_ego):
 def compute_periods(dicoreader,
                     threshold, duration, smoothing,
                     skip_months = 12, field = 'approved_friends'):
-    row = skip_first_months(dicoreader, skip_months)
     res = []
+    row = skip_first_months(dicoreader, skip_months)
     months = 0
     while True:
         if months == 0:
             first_month, first_year = int(row['Month']), int(row['Year'])
             total_value = 0
+            diff = 0
+        else:
+            row_month, row_year = int(row['Month']), int(row['Year'])
+            diff = diff_month(prev_month, row_month, prev_year, row_year)
 
-        row_month, row_year = int(row['Month']), int(row['Year'])
-        diff = diff_month(prev_month, row_month, prev_year, row_year)
         field_value = mk_int(row[field])
         if field_value >= threshold:
             if diff <= 1:
