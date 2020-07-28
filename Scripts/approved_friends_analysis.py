@@ -113,9 +113,9 @@ def process_ego(ego_path, duration, thresold, smoothing):
     file.close()
 
 
-def process_egos(filespath, thresold, smoothing):
+def process_egos(filespath, thresold, smoothing, duration):
     for file in filespath:
-        process_ego(file, thresold, smoothing)
+        process_ego(file, thresold, smoothing, duration)
 
 
 def process_files():
