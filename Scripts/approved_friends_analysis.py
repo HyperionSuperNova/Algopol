@@ -7,19 +7,22 @@ csv_path = Path('../Alter-count-csv-plots/')
 output_path = Path('../output/')
 
 
-def plus_one_year(dicoreader):
+def diff_month(month1, month2, year1, year2):
+    return ((year2 - year1) * 12) + (month2 - month1)
+
+
+def skip_first_months(dicoreader, months):
     first_row = next(dicoreader)
     tmp = next(dicoreader)
     first_month, first_year = int(first_row['Month']), int(first_row['Year'])
     tmp_month, tmp_year = int(tmp['Month']), int(tmp['Year'])
-    while tmp_month != first_month and tmp_year != (first_year + 1):
+    while diff_month(first_month, tmp_month, first_year, tmp_year) <= months:
         tmp = next(dicoreader)
         tmp_month, tmp_year = int(tmp['Month']), int(tmp['Year'])
     return tmp
 
-
-def diff_month(month1, month2, year1, year2):
-    return ((year2 - year1) * 12) + (month2 - month1)
+def plus_one_year(dicoreader):
+    return skip_first_months(dicoreader, 12)
 
 
 def get_last_day_of_month(datep):
@@ -43,37 +46,61 @@ def get_csvwriter(id_ego):
     dicowriter.writeheader()
     return dicowriter, csvf
 
+def compute_periods(dicoreader, dicowriter,
+                    threshold, duration, smoothing,
+                    skip_months = 12, field = 'approved_friends'):
+    tmp_row = skip_first_months(dicoreader, skip_months)
+    first_month, first_year = int(tmp_row['Month']), int(tmp_row['Year'])
+    tmp_month, tmp_year = int(tmp_row['Month']), int(tmp_row['Year'])
+    months = 0
+    total_value = 0
+    res = []
+    for row in dicoreader:
+        row_month, row_year = int(row['Month']), int(row['Year'])
+        field_value = mk_int(row[field])
+        if diff_month(tmp_month, row_month, tmp_year, row_year) == 1 \
+        and field_value >= threshold:
+            months += 1
+            tmp_month, tmp_year = row_month, row_year
+            total_value += int(row[field])
+        else:
+            if months >= duration:
+#                delta_month = diff_month(first_month, tmp_month,
+#                                         first_year, tmp_year)
+                date_begin = datetime(first_year, first_month, 1)
+                date_end = datetime(tmp_year, tmp_month, 1)
+                date_end = get_last_day_of_month(date_end)
+                write_period()
+                period = {
+                    'date_begin': date_begin, 'date_end': date_end, 'month_diff': months,
+                    'nb_total': total_value,
+                    'type': field,
+                    'skip_months': skip_months,
+                    'threshold': threshold,
+                    'duration': duration,
+                    'smoothing': smoothing
+                }
+                res.append(period)
 
-def process_ego(ego_path, thresold, smoothing):
+            total_value = months = 0
+            first_month, first_year = int(row['Month']), int(row['Year'])
+            tmp_month, tmp_year = int(row['Month']), int(row['Year'])
+
+    return res
+
+def write_periods(writer, periods):
+    for period in periods:
+        writer.writerow(period)
+
+def process_ego(ego_path, duration = 2, thresold, smoothing):
     id_ego = ego_path.name.split('_')[0]
     dicowriter, file = get_csvwriter(id_ego)
     dicoreader = csv.DictReader(ego_path.open('r', encoding='utf-8'))
     try:
-        tmp_row = plus_one_year(dicoreader)
-        first_month, first_year = int(tmp_row['Month']), int(tmp_row['Year'])
-        tmp_month, tmp_year = int(tmp_row['Month']), int(tmp_row['Year'])
-        count_thres = 0
-        total_in_thres = 0
-        for row in dicoreader:
-            row_month, row_year = int(row['Month']), int(row['Year'])
-            if diff_month(tmp_month, row_month, tmp_year, row_year) == 1 and mk_int(
-                    row['approved_friends']) >= smoothing:
-                count_thres += 1
-                tmp_month, tmp_year = row_month, row_year
-                total_in_thres += int(row['approved_friends'])
-            else:
-                if count_thres >= thresold:
-                    delta_month = diff_month(first_month, tmp_month, first_year, tmp_year)
-                    date_begin = get_last_day_of_month(datetime(first_year, first_month, 1))
-                    date_end = get_last_day_of_month(datetime(tmp_year, tmp_month, 1))
-                    dicowriter.writerow(
-                        {'id_ego': id_ego, 'date_begin': date_begin, 'date_end': date_end, 'month_diff': delta_month,
-                         'nb_total': total_in_thres, 'type': 'approvedfriends', 'thresold': thresold,
-                         'smoothing': smoothing})
-                count_thres = 0
-                total_in_thres = 0
-                first_month, first_year = int(row['Month']), int(row['Year'])
-                tmp_month, tmp_year = int(row['Month']), int(row['Year'])
+        periods = compute_periods(dicoreader,
+                                  duration, thresold, smoothing)
+        write_periods(dicowriter, periods)
+
     except Exception as excp:
         print(excp)
     file.close()
