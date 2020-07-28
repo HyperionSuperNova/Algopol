@@ -56,12 +56,12 @@ def compute_periods(dicoreader,
     row = skip_first_months(dicoreader, skip_months)
     months = 0
     while True:
+        row_month, row_year = int(row['Month']), int(row['Year'])
         if months == 0:
             first_month, first_year = int(row['Month']), int(row['Year'])
             total_value = 0
             diff = 0
         else:
-            row_month, row_year = int(row['Month']), int(row['Year'])
             diff = diff_month(prev_month, row_month, prev_year, row_year)
 
         field_value = mk_int(row[field])
@@ -107,9 +107,9 @@ def process_ego(ego_path, duration, thresold, smoothing):
     dicowriter, file = get_csvwriter(ego_id)
     dicoreader = csv.DictReader(ego_path.open('r', encoding='utf-8'))
 #    try:
-        periods = compute_periods(dicoreader,
-                                  duration, thresold, smoothing)
-        write_periods(dicowriter, periods, ego_id)
+    periods = compute_periods(dicoreader,
+                              duration, thresold, smoothing)
+    write_periods(dicowriter, periods, ego_id)
 
 #    except Exception as excp:
 #        print(excp)
