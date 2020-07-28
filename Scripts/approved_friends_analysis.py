@@ -106,13 +106,13 @@ def process_ego(ego_path, duration, thresold, smoothing):
     ego_id = ego_path.name.split('_')[0]
     dicowriter, file = get_csvwriter(ego_id)
     dicoreader = csv.DictReader(ego_path.open('r', encoding='utf-8'))
-    try:
+#    try:
         periods = compute_periods(dicoreader,
                                   duration, thresold, smoothing)
         write_periods(dicowriter, periods, ego_id)
 
-    except Exception as excp:
-        print(excp)
+#    except Exception as excp:
+#        print(excp)
     file.close()
 
 
