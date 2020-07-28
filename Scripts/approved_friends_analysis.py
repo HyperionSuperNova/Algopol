@@ -56,39 +56,38 @@ def compute_periods(dicoreader,
     res = []
     months = 0
     while True:
-        field_value = mk_int(row[field])
-
         if months == 0:
             first_month, first_year = int(row['Month']), int(row['Year'])
             total_value = 0
 
-            row_month, row_year = int(row['Month']), int(row['Year'])
-            diff = diff_month(prev_month, row_month, prev_year, row_year)
-            if field_value >= threshold:
-                if diff <= 1:
-                    months += 1
-                    prev_month, prev_year = row_month, row_year
-                    total_value += field_value
-            else:
-                if months >= duration:
-    #                delta_month = diff_month(first_month, prev_month,
-    #                                         first_year, prev_year)
-                    date_begin = datetime(first_year, first_month, 1)
-                    date_end = datetime(prev_year, prev_month, 1)
-                    date_end = get_last_day_of_month(date_end)
-                    period = {
-                        'date_begin': date_begin, 'date_end': date_end,
-                        'months': months,
-                        'nb_total': total_value,
-                        'type': field,
-                        'skip_months': skip_months,
-                        'threshold': threshold,
-                        'duration': duration,
-                        'smoothing': smoothing
-                    }
-                    res.append(period)
+        row_month, row_year = int(row['Month']), int(row['Year'])
+        diff = diff_month(prev_month, row_month, prev_year, row_year)
+        field_value = mk_int(row[field])
+        if field_value >= threshold:
+            if diff <= 1:
+                months += 1
+                prev_month, prev_year = row_month, row_year
+                total_value += field_value
+        else:
+            if months >= duration:
+#                delta_month = diff_month(first_month, prev_month,
+#                                         first_year, prev_year)
+                date_begin = datetime(first_year, first_month, 1)
+                date_end = datetime(prev_year, prev_month, 1)
+                date_end = get_last_day_of_month(date_end)
+                period = {
+                    'date_begin': date_begin, 'date_end': date_end,
+                    'months': months,
+                    'nb_total': total_value,
+                    'type': field,
+                    'skip_months': skip_months,
+                    'threshold': threshold,
+                    'duration': duration,
+                    'smoothing': smoothing
+                }
+                res.append(period)
 
-                months = 0
+            months = 0
 
         row = next(dicoreader)
         if row is None:
