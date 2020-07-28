@@ -53,11 +53,7 @@ def compute_periods(dicoreader,
                     threshold, duration, smoothing,
                     skip_months = 12, field = 'approved_friends'):
     res = []
-    try:
-        row = skip_first_months(dicoreader, skip_months)
-    except StopIteration:
-        return res
-
+    row = skip_first_months(dicoreader, skip_months)
     months = 0
     while True:
         row_month, row_year = int(row['Month']), int(row['Year'])
@@ -95,8 +91,9 @@ def compute_periods(dicoreader,
 
             months = 0
 
-        row = next(dicoreader)
-        if row is None:
+        try:
+            row = next(dicoreader)
+        except StopIteration:
             return res
 
 
