@@ -41,7 +41,10 @@ def get_csvwriter(id_ego):
     csvf = out_path.open('a', encoding='utf-8')
     dicowriter = csv.DictWriter(
         csvf,
-        fieldnames=['id_ego', 'date_begin', 'date_end', 'month_diff', 'nb_total', 'type', 'thresold', 'smoothing'],
+        fieldnames=['ego_id',
+            'date_begin', 'date_end', 'months', 'nb_total',
+            'type',
+            'skip_months', 'threshold', 'duration', 'smoothing'],
         delimiter=',')
     dicowriter.writeheader()
     return dicowriter, csvf
@@ -72,7 +75,8 @@ def compute_periods(dicoreader, dicowriter,
                 date_end = get_last_day_of_month(date_end)
                 write_period()
                 period = {
-                    'date_begin': date_begin, 'date_end': date_end, 'month_diff': months,
+                    'date_begin': date_begin, 'date_end': date_end,
+                    'months': months,
                     'nb_total': total_value,
                     'type': field,
                     'skip_months': skip_months,
@@ -88,18 +92,21 @@ def compute_periods(dicoreader, dicowriter,
 
     return res
 
-def write_periods(writer, periods):
+
+def write_periods(writer, periods, ego_id):
     for period in periods:
+        period['ego_id'] = ego_id
         writer.writerow(period)
 
-def process_ego(ego_path, duration = 2, thresold, smoothing):
-    id_ego = ego_path.name.split('_')[0]
-    dicowriter, file = get_csvwriter(id_ego)
+
+def process_ego(ego_path, duration, thresold, smoothing):
+    ego_id = ego_path.name.split('_')[0]
+    dicowriter, file = get_csvwriter(ego_id)
     dicoreader = csv.DictReader(ego_path.open('r', encoding='utf-8'))
     try:
         periods = compute_periods(dicoreader,
                                   duration, thresold, smoothing)
-        write_periods(dicowriter, periods)
+        write_periods(dicowriter, periods, ego_id)
 
     except Exception as excp:
         print(excp)
@@ -118,4 +125,4 @@ def process_files():
 
 if __name__ == '__main__':
     files_path = process_files()
-    process_egos(files_path, 2, 20)
+    process_egos(files_path, 2, 20, 2)
