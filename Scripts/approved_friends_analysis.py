@@ -53,7 +53,11 @@ def compute_periods(dicoreader,
                     threshold, duration, smoothing,
                     skip_months = 12, field = 'approved_friends'):
     res = []
-    row = skip_first_months(dicoreader, skip_months)
+    try:
+        row = skip_first_months(dicoreader, skip_months)
+    except StopIteration:
+        return res
+
     months = 0
     while True:
         row_month, row_year = int(row['Month']), int(row['Year'])
@@ -106,13 +110,10 @@ def process_ego(ego_path, duration, thresold, smoothing):
     ego_id = ego_path.name.split('_')[0]
     dicowriter, file = get_csvwriter(ego_id)
     dicoreader = csv.DictReader(ego_path.open('r', encoding='utf-8'))
-#    try:
     periods = compute_periods(dicoreader,
                               duration, thresold, smoothing)
     write_periods(dicowriter, periods, ego_id)
 
-#    except Exception as excp:
-#        print(excp)
     file.close()
 
 
