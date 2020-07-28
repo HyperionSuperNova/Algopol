@@ -49,7 +49,7 @@ def get_csvwriter(id_ego):
     dicowriter.writeheader()
     return dicowriter, csvf
 
-def compute_periods(dicoreader, dicowriter,
+def compute_periods(dicoreader,
                     threshold, duration, smoothing,
                     skip_months = 12, field = 'approved_friends'):
     tmp_row = skip_first_months(dicoreader, skip_months)
