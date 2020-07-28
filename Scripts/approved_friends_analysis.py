@@ -52,45 +52,46 @@ def get_csvwriter(id_ego):
 def compute_periods(dicoreader,
                     threshold, duration, smoothing,
                     skip_months = 12, field = 'approved_friends'):
-    tmp_row = skip_first_months(dicoreader, skip_months)
-    first_month, first_year = int(tmp_row['Month']), int(tmp_row['Year'])
-    tmp_month, tmp_year = int(tmp_row['Month']), int(tmp_row['Year'])
-    months = 1
-    total_value = 0
+    row = skip_first_months(dicoreader, skip_months)
     res = []
-    for row in dicoreader:
-        row_month, row_year = int(row['Month']), int(row['Year'])
+    months = 0
+    while True:
         field_value = mk_int(row[field])
-        if diff_month(tmp_month, row_month, tmp_year, row_year) == 1 \
-        and field_value >= threshold:
-            months += 1
-            tmp_month, tmp_year = row_month, row_year
-            total_value += int(row[field])
-        else:
-            if months >= duration:
-#                delta_month = diff_month(first_month, tmp_month,
-#                                         first_year, tmp_year)
-                date_begin = datetime(first_year, first_month, 1)
-                date_end = datetime(tmp_year, tmp_month, 1)
-                date_end = get_last_day_of_month(date_end)
-                period = {
-                    'date_begin': date_begin, 'date_end': date_end,
-                    'months': months,
-                    'nb_total': total_value,
-                    'type': field,
-                    'skip_months': skip_months,
-                    'threshold': threshold,
-                    'duration': duration,
-                    'smoothing': smoothing
-                }
-                res.append(period)
-
-            total_value = 0
-            months = 1
+        if months == 0:
             first_month, first_year = int(row['Month']), int(row['Year'])
-            tmp_month, tmp_year = int(row['Month']), int(row['Year'])
+            prev_month, prev_year = int(row['Month']), int(row['Year'])
+            total_value = field_value
+        else:
+            row_month, row_year = int(row['Month']), int(row['Year'])
+            if diff_month(prev_month, row_month, prev_year, row_year) == 1 \
+            and field_value >= threshold:
+                months += 1
+                prev_month, prev_year = row_month, row_year
+                total_value += field_value
+            else:
+                if months >= duration:
+    #                delta_month = diff_month(first_month, prev_month,
+    #                                         first_year, prev_year)
+                    date_begin = datetime(first_year, first_month, 1)
+                    date_end = datetime(prev_year, prev_month, 1)
+                    date_end = get_last_day_of_month(date_end)
+                    period = {
+                        'date_begin': date_begin, 'date_end': date_end,
+                        'months': months,
+                        'nb_total': total_value,
+                        'type': field,
+                        'skip_months': skip_months,
+                        'threshold': threshold,
+                        'duration': duration,
+                        'smoothing': smoothing
+                    }
+                    res.append(period)
 
-    return res
+                months = 0
+
+        row = next(dicoreader)
+        if row == None:
+            return res
 
 
 def write_periods(writer, periods, ego_id):
