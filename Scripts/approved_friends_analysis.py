@@ -57,17 +57,18 @@ def compute_periods(dicoreader,
     months = 0
     while True:
         field_value = mk_int(row[field])
+
         if months == 0:
             first_month, first_year = int(row['Month']), int(row['Year'])
-            prev_month, prev_year = int(row['Month']), int(row['Year'])
-            total_value = field_value
-        else:
+            total_value = 0
+
             row_month, row_year = int(row['Month']), int(row['Year'])
-            if diff_month(prev_month, row_month, prev_year, row_year) == 1 \
-            and field_value >= threshold:
-                months += 1
-                prev_month, prev_year = row_month, row_year
-                total_value += field_value
+            diff = diff_month(prev_month, row_month, prev_year, row_year)
+            if field_value >= threshold:
+                if diff <= 1:
+                    months += 1
+                    prev_month, prev_year = row_month, row_year
+                    total_value += field_value
             else:
                 if months >= duration:
     #                delta_month = diff_month(first_month, prev_month,
@@ -90,7 +91,7 @@ def compute_periods(dicoreader,
                 months = 0
 
         row = next(dicoreader)
-        if row == None:
+        if row is None:
             return res
 
 
