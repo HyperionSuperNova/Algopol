@@ -55,7 +55,7 @@ def compute_periods(dicoreader,
     tmp_row = skip_first_months(dicoreader, skip_months)
     first_month, first_year = int(tmp_row['Month']), int(tmp_row['Year'])
     tmp_month, tmp_year = int(tmp_row['Month']), int(tmp_row['Year'])
-    months = 0
+    months = 1
     total_value = 0
     res = []
     for row in dicoreader:
@@ -73,7 +73,6 @@ def compute_periods(dicoreader,
                 date_begin = datetime(first_year, first_month, 1)
                 date_end = datetime(tmp_year, tmp_month, 1)
                 date_end = get_last_day_of_month(date_end)
-                write_period()
                 period = {
                     'date_begin': date_begin, 'date_end': date_end,
                     'months': months,
@@ -86,7 +85,8 @@ def compute_periods(dicoreader,
                 }
                 res.append(period)
 
-            total_value = months = 0
+            total_value = 0
+            months = 1
             first_month, first_year = int(row['Month']), int(row['Year'])
             tmp_month, tmp_year = int(row['Month']), int(row['Year'])
 
@@ -125,4 +125,4 @@ def process_files():
 
 if __name__ == '__main__':
     files_path = process_files()
-    process_egos(files_path, 2, 20, 2)
+    process_egos(files_path, 2, 2, 2)
