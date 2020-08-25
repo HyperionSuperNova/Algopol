@@ -4,6 +4,8 @@ import csv
 from datetime import *
 from typing import List, Any
 import os
+from statistics import mean
+
 
 class IO:
 
@@ -35,15 +37,15 @@ class IO:
     def get_smoothing(self):
         return self.args.smoothing
 
-    def write_results(self,results,ego_id):
+    def write_results(self, results, ego_id):
         result_path = self.get_output_path() / f'{ego_id}.csv'
         file_exists = os.path.isfile(result_path)
         with open(result_path, 'a') as csvfile:
-            headers = ['TimeStamp', 'light', 'Proximity']
             dicowriter = csv.DictWriter(
                 csvfile,
                 fieldnames=['ego_id',
-                            'date_begin', 'date_end', 'months', 'nb_total',
+                            'date_begin', 'date_end', 'months',
+                            'nb_total', 'total_smoothed',
                             'type',
                             'skip_months', 'threshold', 'duration', 'smoothing'],
                 delimiter=',')
@@ -52,6 +54,7 @@ class IO:
             for period in results:
                 period['ego_id'] = ego_id
                 dicowriter.writerow(period)
+
 
 class Bridge:
     def __init__(self):
@@ -64,10 +67,10 @@ class Bridge:
     def process_ego(self, ego):
         ego_id = ego.name.split('_')[0]
         dicoreader = csv.DictReader(ego.open('r', encoding='utf-8'))
-        apa = ActivityPeriodsAnalysis(ego_id,dicoreader,self.io.get_thresold(),self.io.get_smoothing(),self.io.get_duration())
+        apa = ActivityPeriodsAnalysis(ego_id, dicoreader, self.io.get_thresold(), self.io.get_smoothing(),
+                                      self.io.get_duration())
         results = apa.get_results()
-        self.io.write_results(results,ego_id)
-
+        self.io.write_results(results, ego_id)
 
 
 class ActivityPeriodsAnalysis:
@@ -77,6 +80,7 @@ class ActivityPeriodsAnalysis:
         self.ego_id = ego_id
         self.ego_dico = ego_dico
         self.thresold = thresold
+        self.total_value = 0
         self.smoothing = smoothing
         self.duration = duration
         self.date_begin = None
@@ -109,11 +113,12 @@ class ActivityPeriodsAnalysis:
             tmp_month, tmp_year = int(tmp['Month']), int(tmp['Year'])
         return tmp
 
-    def append_period(self, skip_month, field):
+    def append_period(self, skip_month, field, smoothed_value):
         period = {
             'date_begin': self.date_begin, 'date_end': self.date_end,
             'months': self.months,
             'nb_total': self.total_value,
+            'total_smoothed': smoothed_value,
             'type': field,
             'skip_months': skip_month,
             'threshold': self.thresold,
@@ -123,7 +128,7 @@ class ActivityPeriodsAnalysis:
         self.results.append(period)
 
     def compute_periods(self, skip_months=12, field='approved_friends'):
-        res = []
+        values_to_smooth = []
         try:
             row = self.skip_first_months(skip_months)
         except StopIteration:
@@ -135,6 +140,7 @@ class ActivityPeriodsAnalysis:
             if self.months == 0:
                 first_month, first_year = int(row['Month']), int(row['Year'])
                 self.total_value = 0
+                values_to_smooth = []
                 diff = 0
             else:
                 diff = self.diff_month(prev_month, row_month, prev_year, row_year)
@@ -145,12 +151,14 @@ class ActivityPeriodsAnalysis:
                     self.months += 1
                     prev_month, prev_year = row_month, row_year
                     self.total_value += field_value
+                    values_to_smooth.append(field_value)
             else:
                 if self.months >= self.duration:
                     self.date_begin = datetime(first_year, first_month, 1)
                     self.date_end = self.get_last_day_of_month(datetime(prev_year, prev_month, 1))
-                    self.append_period(skip_months, field)
-
+                    values_to_smooth.append(field_value)
+                    smoothed_value = self.compute_smoothed_value(values_to_smooth)
+                    self.append_period(skip_months, field, smoothed_value)
                 self.months = 0
 
             try:
@@ -161,6 +169,17 @@ class ActivityPeriodsAnalysis:
     def get_results(self):
         self.compute_periods()
         return self.results
+
+    def compute_smoothed_value(self, unsmoothed_values):
+        smooth_val = 0
+        tmp = []
+        if len(unsmoothed_values) < (self.smoothing * 2) + 1:
+            return smooth_val
+        for i in range(0, len(unsmoothed_values)):
+            if (i + (self.smoothing * 2)) >= len(unsmoothed_values):
+                tmp.append(sum(unsmoothed_values[i:(i + (self.smoothing * 2))]))
+        print(tmp)
+        return mean(tmp)
 
 
 if __name__ == "__main__":
