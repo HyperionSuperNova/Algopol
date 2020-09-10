@@ -4,8 +4,8 @@ import json
 import gzip
 import re
 
-from Scripts.LateFriendshipsAnalysis.Friends import Friends
-from Scripts.LateFriendshipsAnalysis.Qualify import Qualify
+from Friends import Friends
+from Qualify import Qualify
 
 
 class IO:
@@ -52,6 +52,6 @@ if __name__ == '__main__':
     except FileNotFoundError as fnfr:
         print(f'{ioyo.get_ego_id()} doesn\'t have a qualify file')
 
-    '''with gzip.open(ioyo.get_friends_path(), 'rt', encoding='utf-8') as friends_json:
+    with gzip.open(ioyo.get_friends_path(), 'rt', encoding='utf-8') as friends_json:
         friends = Friends(friends_json, qualify_set)
-        print(friends.generate_json())'''
+        print(friends.generate_json())

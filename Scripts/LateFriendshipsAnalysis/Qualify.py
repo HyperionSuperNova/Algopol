@@ -1,3 +1,6 @@
+import json
+
+
 class Qualify:
 
     def __init__(self, qualify_json, closeness, since):
