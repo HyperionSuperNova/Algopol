@@ -11,7 +11,7 @@ class Bridge:
             self.process_ego(file)
 
     def process_ego(self, ego):
-        ego_id = ego.name.split('_')[0]
+        ego_id = ego.name.split('.')[0]
         dicoreader = csv.DictReader(ego.open('r', encoding='utf-8'))
         apa = ActivityPeriodsAnalysis(ego_id, dicoreader, self.io.get_thresold(), self.io.get_smoothing(),
                                       self.io.get_duration())
