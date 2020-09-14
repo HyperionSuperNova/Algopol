@@ -1,4 +1,3 @@
-.gitignore
 *.csv
 output
 sample_*
@@ -6,3 +5,4 @@ sample_*
 .ipynb_checkpoints
 Alter-count-csv-plots
 Sunbelt
+/networks/
