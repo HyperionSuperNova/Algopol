@@ -13,39 +13,29 @@ import argparse
 import logging
 import json
 from dateutil.relativedelta import *
+import math
 
 sns.set()
 
 json_path = '/home/data/algopol/algopolapp/dataset03/'
 
 
-#json_path = '../sample_json/'
+# json_path = '../sample_json/'
 
 
-def dict_to_csvdict(dico_csv, dico_json):
-    if len(dico_json) == 0:
-        return [
-            {'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k], 'leaving_friends': ''}
+def dict_to_csvdict(dico_csv):
+    return [{'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k], 'leaving_friends': ''}
             for k in dico_csv]
-    L = []
-    for k in dico_csv:
-        if k in dico_json:
-            L.append({'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k],
-                      'leaving_friends': dico_json[k][0]})
-        else:
-            L.append({'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k],
-                      'leaving_friends': ''})
-    return L
 
 
-def write_to_csv(id_ego, dicocsv, dicojson, output_path):
+def write_to_csv(id_ego, dicocsv, output_path):
     final_path = os.path.join(output_path, 'csv')
     if not os.path.exists(final_path):
         os.makedirs(final_path)
     csv_file = os.path.join(final_path, id_ego + '.csv')
     csv_columns = ['Month', 'Year', 'leaving_active',
                    'leaving_friends']
-    dict_data = dict_to_csvdict(dicocsv, dicojson)
+    dict_data = dict_to_csvdict(dicocsv)
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
@@ -56,82 +46,11 @@ def write_to_csv(id_ego, dicocsv, dicojson, output_path):
         print("I/O error")
 
 
-def export_total(idego, total, dicowriter):
-    dicowriter.writerow({'ego': idego, 'nb_approved_friends': total})
-
-
 def add_value_to_dict(dico, key, val):
     if key in dico.keys():
         dico[key] = dico[key] + val
     else:
         dico[key] = val
-
-
-def get_first_approval(jsons):
-    first_json = jsons.pop()
-    while first_json['guessed_type'] != 'EapprouveAmi' and len(jsons) > 0:
-        first_json = jsons.pop(0)
-    return first_json
-
-
-def get_jsons_as_list(id_ego):
-    path = json_path + id_ego + '/statuses.jsons.gz'
-    file = gzip.open(path, 'rt', encoding='utf-8')
-    return [json.loads(line) for line in file]
-
-
-def process_first_approval(id_ego):
-    pass
-
-
-def approved_friend_per_month(id_ego):
-    jsons = get_jsons_as_list(id_ego)
-    if len(jsons) == 0:
-        return {}
-    first_json = get_first_approval(jsons)
-    if len(first_json) == 0:
-        return {}
-    nb_new = 0
-    nb_new_per_month = 0
-    total = 0
-    by_month = {}
-    alters = {}
-    old_alters = {}
-    dt_before = last_day_of_month(
-        datetime.fromtimestamp(int(first_json['created'])))
-    if 'tags' in first_json:
-        for alter in first_json['tags']:
-            if alter not in alters and alter != id_ego:
-                nb_new += 1
-                total += 1
-                nb_new_per_month += 1
-                add_value_to_dict(
-                    old_alters, (dt_before.month, dt_before.year + 1), 1)
-
-    for jsonf in jsons:
-        timestamp = int(jsonf['created'])
-        if 'guessed_type' in jsonf:
-            if jsonf['guessed_type'] == 'EapprouveAmi':
-                dt_timestamp = datetime.fromtimestamp(timestamp)
-                month_next_year = (dt_timestamp.month, dt_timestamp.year + 1)
-                dt_last_of_next_month = last_day_of_month(dt_timestamp)
-                month_year = (dt_timestamp.month, dt_timestamp.year)
-                if 'tags' in jsonf:
-                    for alter in jsonf['tags']:
-                        if alter not in alters and alter != id_ego:
-                            total += 1
-                            nb_new += 1
-                            add_value_to_dict(old_alters, month_next_year, 1)
-                            nb_new_per_month += 1
-                    if int((dt_last_of_next_month - dt_before).days) >= 28:
-                        while dt_before < dt_timestamp:
-                            month_year = (dt_before.month, dt_before.year)
-                            if month_year in old_alters:
-                                nb_new -= old_alters[month_year]
-                            by_month[month_year] = (nb_new, nb_new_per_month)
-                            dt_before = dt_before + relativedelta(months=+1)
-                            nb_new_per_month = 0
-    return by_month, total
 
 
 def get_ego_id(ego_path):
@@ -174,13 +93,13 @@ def new_alters_by_month_bis(ego, csvobj):
             month_year = (dt_timestamp.month, dt_timestamp.year)
             add_value_to_dict(old_alters, month_next_year, 1)
             # step months if needed
-            if int((dt_last_of_next_month - dt_before).days) >= 28:
-                while dt_before < dt_timestamp:
+            if int(abs((dt_last_of_next_month - dt_before).days)) >= 28:
+                while dt_before >= dt_timestamp:
                     month_year = (dt_before.month, dt_before.year)
                     if month_year in old_alters:
                         nb_new -= old_alters[month_year]
                     by_month[month_year] = nb_new
-                    dt_before = dt_before + relativedelta(months=+1)
+                    dt_before = dt_before - relativedelta(months=+1)
             nb_new += 1
 
     return by_month
@@ -197,11 +116,11 @@ def prepare_total_writer(output_path):
     return dicowriter
 
 
-def generate_plot_from_dict(id_ego, dico, dico_json, output_path):
+def generate_plot_from_dict(id_ego, dico, output_path):
     final_path = os.path.join(output_path, 'plots')
     if not os.path.exists(final_path):
         os.makedirs(final_path)
-    dico = dict_to_csvdict(dico, dico_json)
+    dico = dict_to_csvdict(dico)
     if len(dico) == 0:
         return
     dico_df = pd.DataFrame.from_records(dico)
@@ -244,11 +163,8 @@ def execution(filename, output_path, total_writer):
     logging.basicConfig(filename=log_name, level=logging.WARNING)
     try:
         dico_by_month = new_alters_by_month_bis(id_ego, csvobj)
-        json_by_month, total = approved_friend_per_month(id_ego)
-        write_to_csv(id_ego, dico_by_month, json_by_month, output_path)
-        generate_plot_from_dict(id_ego, dico_by_month,
-                                json_by_month, output_path)
-        export_total(id_ego, total, total_writer)
+        write_to_csv(id_ego, dico_by_month, output_path)
+        generate_plot_from_dict(id_ego, dico_by_month, output_path)
     except Exception as excp:
         print(excp)
         logging.warning('%s', filename)
