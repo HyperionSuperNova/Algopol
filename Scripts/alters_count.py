@@ -42,7 +42,7 @@ def write_to_csv(id_ego, dicocsv, dicojson, output_path):
     final_path = os.path.join(output_path, 'csv')
     if not os.path.exists(final_path):
         os.makedirs(final_path)
-    csv_file = os.path.join(final_path, id_ego + '_alter-count.csv')
+    csv_file = os.path.join(final_path, id_ego + '.csv')
     csv_columns = ['Month', 'Year', 'recent_active',
                    'recent_friends', 'approved_friends']
     dict_data = dict_to_csvdict(dicocsv, dicojson)
