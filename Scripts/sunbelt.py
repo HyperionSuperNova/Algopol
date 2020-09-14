@@ -7,9 +7,11 @@ import csv
 cluster_order_path = '/home/data/algopol/algopolapp/results/Imera/Cluster_order/Egos/*'
 output_egos_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_id.txt'
 output_csv_path = '/home/data/algopol/user/nabil/Sunbelt/filtered_egos_month_year_cluster.csv'
-#cluster_order_path = '../sunbelt/Cluster_order/sample_bugged/*'
-#output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
-#output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
+
+
+# cluster_order_path = '../sunbelt/Cluster_order/sample_bugged/*'
+# output_egos_path = '../output/sunbelt/filtered_egos_id_test.txt'
+# output_csv_path = '../output/sunbelt/filtered_egos_month_year_cluster_test.csv'
 
 
 def prepare_dataframe(dataframe):
@@ -53,7 +55,7 @@ def dom_clust_date(dataframe, consecutive_months):
             count = 1
         if count == consecutive_months:
             return (row['month'], row['year'], True)
-    return('', '', False)
+    return ('', '', False)
 
 
 def write_to_csv(csv_list, dicowriter):
@@ -62,7 +64,7 @@ def write_to_csv(csv_list, dicowriter):
 
 
 def write_to_txt(txt_writer, ego):
-    txt_writer.write(ego+"\n")
+    txt_writer.write(ego + "\n")
 
 
 def process_cluster(ego_clusters, filter, consecutive_months, ego, dicowriter):
@@ -72,7 +74,7 @@ def process_cluster(ego_clusters, filter, consecutive_months, ego, dicowriter):
     for cluster in ego_clusters:
         dico_tmp = {}
         filter2 = filter[(filter.first_cluster == cluster)
-                         ].sort_values('month_year')
+        ].sort_values('month_year')
         filter2['monthdiff'] = filter.groupby(
             'first_cluster').month.diff().fillna(1).astype(int)
         month, year, is_cons_month = dom_clust_date(
@@ -102,7 +104,7 @@ def egos_list_consecutive_months(dataframe, ratio, consecutive_months, val_brute
         count_clust = 0
         csv_candidate = []
         filter = dataframe[(dataframe.egos == ego) & (
-            dataframe.ratio_over_second >= ratio) & (dataframe.nb_posts >= val_brute)]
+                dataframe.ratio_over_second >= ratio) & (dataframe.nb_posts >= val_brute)]
         ego_clusters = filter.first_cluster.unique()
         process_cluster(ego_clusters, filter,
                         consecutive_months, ego, dicowriter)
