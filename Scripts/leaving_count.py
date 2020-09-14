@@ -24,7 +24,7 @@ json_path = '/home/data/algopol/algopolapp/dataset03/'
 
 
 def dict_to_csvdict(dico_csv):
-    return [{'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k], 'leaving_friends': ''}
+    return [{'Month': k[0], 'Year': k[1], 'leaving_active': dico_csv[k]}
             for k in dico_csv]
 
 
@@ -33,8 +33,7 @@ def write_to_csv(id_ego, dicocsv, output_path):
     if not os.path.exists(final_path):
         os.makedirs(final_path)
     csv_file = os.path.join(final_path, id_ego + '.csv')
-    csv_columns = ['Month', 'Year', 'leaving_active',
-                   'leaving_friends']
+    csv_columns = ['Month', 'Year', 'leaving_active']
     dict_data = dict_to_csvdict(dicocsv)
     try:
         with open(csv_file, 'w') as csvfile:
@@ -88,12 +87,12 @@ def new_alters_by_month_bis(ego, csvobj):
         if idr not in alters and idr != ego:
             alters[idr] = timestamp
             dt_timestamp = datetime.fromtimestamp(timestamp)
-            month_next_year = (dt_timestamp.month, dt_timestamp.year + 1)
-            dt_last_of_next_month = last_day_of_month(dt_timestamp)
+            month_last_year = (dt_timestamp.month, dt_timestamp.year - 1)
+            dt_last_of_previous_month = last_day_of_month(dt_timestamp)
             month_year = (dt_timestamp.month, dt_timestamp.year)
-            add_value_to_dict(old_alters, month_next_year, 1)
+            add_value_to_dict(old_alters, month_last_year, 1)
             # step months if needed
-            if int(abs((dt_last_of_next_month - dt_before).days)) >= 28:
+            if int((dt_before - dt_last_of_previous_month).days) >= 28:
                 while dt_before >= dt_timestamp:
                     month_year = (dt_before.month, dt_before.year)
                     if month_year in old_alters:
@@ -103,17 +102,6 @@ def new_alters_by_month_bis(ego, csvobj):
             nb_new += 1
 
     return by_month
-
-
-def prepare_total_writer(output_path):
-    file_path = os.path.join(output_path, 'leaving_friends_per_ego.csv')
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    csvf = open(file_path, 'a')
-    dicowriter = csv.DictWriter(
-        csvf, fieldnames=['ego', 'nb_approved_friends'], delimiter=',')
-    dicowriter.writeheader()
-    return dicowriter
 
 
 def generate_plot_from_dict(id_ego, dico, output_path):
@@ -133,10 +121,9 @@ def generate_plot_from_dict(id_ego, dico, output_path):
             'leaving_active',
             color='purple', data=dico_df)
     dico_df = dico_df.replace('', 0)
-    ax.plot('date', 'leaving_friends', color='blue', data=dico_df)
     ax.legend()
     ax.set(xlabel="Date",
-           ylabel="Nombre d'Alter récents", title=id_ego)
+           ylabel="Number Of Leaving Alters", title=id_ego)
     ax.xaxis.set_major_formatter(date_form)
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
     ax.format_xdata = mdates.DateFormatter('%m-%Y')
@@ -155,7 +142,7 @@ def get_args_parser():
     return parser.parse_args()
 
 
-def execution(filename, output_path, total_writer):
+def execution(filename, output_path):
     filegz = gzip.open(filename, 'rt')
     csvobj = csv.DictReader(filegz)
     id_ego = get_ego_id(filename)
@@ -181,11 +168,10 @@ if __name__ == "__main__":
     elif args.directory is not None:
         directory_path = os.fsencode(args.directory)
         output_path = Path(args.output)
-        total_writer = prepare_total_writer(output_path)
         for file in os.listdir(directory_path):
             filename = os.fsdecode(file)
             if filename.endswith(".csv.gz"):
-                execution(os.path.join(args.directory, filename), output_path, total_writer)
+                execution(os.path.join(args.directory, filename), output_path)
                 continue
             else:
                 continue
