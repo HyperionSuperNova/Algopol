@@ -202,7 +202,7 @@ def generate_plot_from_dict(id_ego, dico, dico_json, output_path):
     if not os.path.exists(final_path):
         os.makedirs(final_path)
     dico = dict_to_csvdict(dico, dico_json)
-    if (len(dico) == 0):
+    if len(dico) == 0:
         return
     dico_df = pd.DataFrame.from_records(dico)
     dico_df['date'] = dico_df['Month'].map(

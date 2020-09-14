@@ -45,7 +45,7 @@ class IO:
                 csvfile,
                 fieldnames=['ego_id',
                             'date_begin', 'date_end', 'months',
-                            'nb_total', 'total_smoothed',
+                            'nb_total',
                             'type',
                             'skip_months', 'threshold', 'duration', 'smoothing'],
                 delimiter=',')
